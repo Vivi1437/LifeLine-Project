@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker – Lifeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-deeper: #0D47A1;
+            --primary-light: #64B5F6;
+            --primary-ultra-light: #E3F2FD;
+            --accent-teal: #0097A7;
+            --accent-teal-dark: #00838F;
+            --light-blue: #f0f7ff;
+            --text-dark: #1E293B;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --white: #ffffff;
+            --error-red: #e74c3c;
+            --success-green: #16a34a;
+            --warning-orange: #f59e0b;
+            --border-color: #e2e8f0;
+            --bg-light: #F8FAFC;
+            --bg-primary: #1976D2;
+            --shadow-blue: 0 8px 25px rgba(25, 118, 210, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-dark);
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ===== BACKGROUND ===== */
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .bg-circle {
+            position: absolute; border-radius: 50%;
+            animation: floatBubble 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            top: -150px; right: -150px;
+        }
+        .bg-circle:nth-child(2) {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(13,71,161,0.15) 0%, transparent 70%);
+            bottom: -100px; left: -100px; animation-delay: -5s;
+        }
+        .bg-circle:nth-child(3) {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(100,181,246,0.08) 0%, transparent 70%);
+            top: 40%; left: 10%; animation-delay: -10s;
+        }
+        .bg-circle:nth-child(4) {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+            bottom: 30%; right: 5%; animation-delay: -15s;
+        }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(30px,-40px) scale(1.05); }
+            50% { transform: translate(-20px,30px) scale(0.95); }
+            75% { transform: translate(25px,15px) scale(1.02); }
+        }
+
+        /* ===== LOADING ===== */
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-primary); display: flex; align-items: center;
+            justify-content: center; flex-direction: column; gap: 20px; z-index: 2000;
+        }
+        .loading-screen.hide { animation: fadeOut 0.5s ease-out forwards; }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 1rem; color: rgba(255,255,255,0.8); }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--white);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header-container {
+            max-width: 1200px; margin: 0 auto; padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deeper));
+            border-radius: 14px; display: flex; align-items: center;
+            justify-content: center; box-shadow: var(--shadow-blue);
+        }
+        .logo-icon i { color: var(--white); font-size: 24px; }
+        .logo-text h1 { font-size: 1.4rem; font-weight: 700; color: var(--primary-blue); line-height: 1.2; }
+        .logo-text span { font-size: 0.7rem; color: var(--text-light); font-weight: 400; }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .user-info {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 15px; background: var(--light-blue);
+            border-radius: 50px; border: 1px solid rgba(25,118,210,0.15);
+        }
+        .user-name {
+            font-size: 0.9rem; font-weight: 500; color: var(--text-dark);
+            max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .home-header-btn {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-dark));
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,151,167,0.3); transition: var(--transition);
+        }
+        .home-header-btn:hover { transform: scale(1.08); }
+        .home-header-btn i { color: var(--white); font-size: 1.1rem; }
+
+        .logout-btn {
+            background: none; border: 2px solid var(--primary-blue);
+            color: var(--primary-blue); padding: 9px 16px; border-radius: 50px;
+            font-size: 0.84rem; font-weight: 600; font-family: 'Poppins', sans-serif;
+            cursor: pointer; display: flex; align-items: center; gap: 6px;
+            transition: var(--transition);
+        }
+        .logout-btn:hover { background: var(--primary-blue); color: var(--white); }
+
+        /* ===== MAIN ===== */
+        .main-content {
+            position: relative; z-index: 1;
+            max-width: 720px; margin: 0 auto; padding: 35px 20px 70px;
+        }
+
+        /* ===== STATS ===== */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 14px; margin-bottom: 24px; animation: fadeInUp 0.5s ease-out;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+            border-radius: 16px; padding: 16px; border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex; align-items: center; gap: 12px; transition: var(--transition);
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .stat-icon.blue { background: var(--primary-ultra-light); color: var(--primary-blue); }
+        .stat-icon.green { background: #f0fdf4; color: var(--success-green); }
+        .stat-icon.amber { background: #fffbeb; color: var(--warning-orange); }
+        .stat-value { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); line-height: 1.2; }
+        .stat-label { font-size: 0.68rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== MAIN CARD ===== */
+        .checker-card {
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+            border-radius: 28px; padding: 45px 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.1), 0 10px 25px rgba(0,0,0,0.05),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative; overflow: hidden;
+            animation: fadeInUp 0.7s ease-out; margin-bottom: 24px;
+        }
+        .checker-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--primary-deeper), var(--primary-blue), var(--primary-light), var(--primary-blue), var(--primary-deeper));
+            background-size: 200% 100%; animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .checker-header { text-align: center; margin-bottom: 32px; }
+        .header-icon-wrap {
+            width: 95px; height: 95px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deeper));
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; box-shadow: 0 10px 35px rgba(25,118,210,0.3);
+            position: relative; animation: iconPulse 2.5s infinite ease-in-out;
+        }
+        @keyframes iconPulse {
+            0%,100% { box-shadow: 0 10px 35px rgba(25,118,210,0.3); }
+            50% { box-shadow: 0 10px 50px rgba(25,118,210,0.5); }
+        }
+        .header-icon-wrap i { font-size: 2.5rem; color: var(--white); }
+        .icon-badge {
+            position: absolute; bottom: 3px; right: 3px;
+            width: 30px; height: 30px; background: var(--white);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .icon-badge i { font-size: 0.8rem; color: var(--primary-blue); }
+
+        .checker-header h2 { font-size: 1.8rem; color: var(--text-dark); font-weight: 700; margin-bottom: 8px; }
+        .checker-header p { color: var(--text-light); font-size: 0.95rem; }
+
+        /* ===== MESSAGES ===== */
+        .message {
+            border-radius: 14px; padding: 15px 20px; margin-bottom: 20px;
+            display: none; align-items: center; gap: 12px; animation: slideDown 0.4s ease-out;
+        }
+        .message.show { display: flex; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .message.error { background: linear-gradient(135deg, rgba(231,76,60,0.12), rgba(231,76,60,0.04)); border: 1px solid rgba(231,76,60,0.25); }
+        .message.error i { color: var(--error-red); font-size: 1.2rem; }
+        .message.error span { color: #c0392b; font-size: 0.9rem; font-weight: 500; }
+
+        .message.success { background: linear-gradient(135deg, rgba(22,163,74,0.12), rgba(22,163,74,0.04)); border: 1px solid rgba(22,163,74,0.25); }
+        .message.success i { color: var(--success-green); font-size: 1.2rem; }
+        .message.success span { color: #15803d; font-size: 0.9rem; font-weight: 500; }
+
+        .message.warning { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04)); border: 1px solid rgba(245,158,11,0.25); }
+        .message.warning i { color: var(--warning-orange); font-size: 1.2rem; }
+        .message.warning span { color: #92400e; font-size: 0.9rem; font-weight: 500; }
+
+        /* ===== FORM ===== */
+        .form-section { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { position: relative; }
+        .form-label {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 0.88rem; font-weight: 600; color: var(--text-dark); margin-bottom: 10px;
+        }
+        .label-icon {
+            width: 30px; height: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deeper));
+            border-radius: 9px; display: flex; align-items: center; justify-content: center;
+        }
+        .label-icon i { color: var(--white); font-size: 0.8rem; }
+
+        .input-wrapper { position: relative; }
+        .input-icon {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 1.05rem; transition: var(--transition); z-index: 2;
+        }
+        .form-input {
+            width: 100%; padding: 16px 16px 16px 48px; font-size: 0.95rem;
+            font-family: 'Poppins', sans-serif; border: 2px solid var(--border-color);
+            border-radius: 14px; background: var(--white); color: var(--text-dark);
+            transition: var(--transition); outline: none;
+        }
+        .form-input::placeholder { color: var(--text-muted); }
+        .form-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(25,118,210,0.1); }
+        .form-input:focus ~ .input-icon { color: var(--primary-blue); }
+
+        /* ===== AUTOCOMPLETE ===== */
+        .autocomplete-wrapper { position: relative; }
+        .autocomplete-list {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--white); border: 2px solid var(--primary-blue);
+            border-top: none; border-radius: 0 0 14px 14px;
+            max-height: 220px; overflow-y: auto; z-index: 100;
+            display: none; box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .autocomplete-list.show { display: block; animation: dropDown 0.25s ease-out; }
+        @keyframes dropDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .autocomplete-item, .suggestion-item {
+            padding: 12px 16px; cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid #f1f5f9; font-size: 0.88rem;
+        }
+        .autocomplete-item:last-child, .suggestion-item:last-child { border-bottom: none; border-radius: 0 0 12px 12px; }
+        .autocomplete-item:hover, .autocomplete-item.active,
+        .suggestion-item:hover, .suggestion-item.active { background: var(--light-blue); }
+        .autocomplete-item i, .suggestion-item i { color: var(--primary-blue); font-size: 0.8rem; flex-shrink: 0; }
+        .autocomplete-item .s-name, .suggestion-item .s-name { font-weight: 500; color: var(--text-dark); flex: 1; }
+        .autocomplete-item .s-name strong, .suggestion-item .s-name strong { color: var(--primary-blue); }
+        .no-suggestions { padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.88rem; }
+        .no-suggestions i { display: block; font-size: 1.8rem; color: #ddd; margin-bottom: 8px; }
+
+        /* ===== TAGS ===== */
+        .tags-section { margin-top: 2px; }
+        .tags-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .tags-title {
+            font-size: 0.8rem; font-weight: 600; color: var(--text-light);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tags-count {
+            background: var(--primary-ultra-light); color: var(--primary-blue);
+            padding: 2px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 700;
+        }
+        .tags-container {
+            display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; padding: 14px;
+            background: var(--bg-light); border: 2px dashed var(--border-color);
+            border-radius: 14px; transition: var(--transition); align-content: flex-start;
+        }
+        .tags-container.has-items { border-style: solid; border-color: rgba(25,118,210,0.25); background: var(--light-blue); }
+        .tags-empty {
+            font-size: 0.84rem; color: var(--text-muted);
+            display: flex; align-items: center; gap: 8px;
+            width: 100%; justify-content: center; padding: 4px 0;
+        }
+
+        .symptom-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 10px 7px 13px; background: var(--white);
+            border: 1.5px solid rgba(25,118,210,0.2); border-radius: 50px;
+            font-size: 0.82rem; font-weight: 500; color: var(--primary-deeper);
+            animation: tagIn 0.3s ease-out; transition: var(--transition);
+            box-shadow: 0 2px 6px rgba(25,118,210,0.06);
+        }
+        .symptom-tag:hover { border-color: var(--primary-blue); box-shadow: 0 4px 12px rgba(25,118,210,0.1); }
+        @keyframes tagIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        .tag-removing { animation: tagOut 0.2s ease-out forwards; }
+        @keyframes tagOut { to { opacity: 0; transform: scale(0.4); } }
+
+        .symptom-tag .tag-dot { width: 5px; height: 5px; background: var(--primary-blue); border-radius: 50%; flex-shrink: 0; }
+        .symptom-tag .tag-remove {
+            display: flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; background: #fee2e2; border: none;
+            border-radius: 50%; cursor: pointer; font-size: 0.55rem;
+            color: #dc2626; transition: var(--transition); padding: 0; margin-left: 2px;
+        }
+        .symptom-tag .tag-remove:hover { background: #dc2626; color: var(--white); transform: scale(1.15); }
+
+        /* ===== BUTTONS ===== */
+        .button-group { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+
+        .analyze-btn {
+            width: 100%; padding: 18px 32px; font-size: 1.1rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif; color: var(--white);
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-deeper));
+            border: none; border-radius: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: var(--transition); position: relative; overflow: hidden;
+            box-shadow: var(--shadow-blue);
+        }
+        .analyze-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.6s;
+        }
+        .analyze-btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(25,118,210,0.4); }
+        .analyze-btn:hover::before { left: 100%; }
+        .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .analyze-btn:disabled::before { display: none; }
+        .analyze-btn.loading { pointer-events: none; opacity: 0.85; }
+        .analyze-btn.loading .btn-text, .analyze-btn.loading .btn-icon-main { opacity: 0; }
+        .analyze-btn .spinner {
+            position: absolute; width: 24px; height: 24px;
+            border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--white);
+            border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
+        }
+        .analyze-btn.loading .spinner { display: block; }
+
+        .clear-btn, .home-btn {
+            width: 100%; padding: 14px 28px; font-size: 0.92rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif; color: var(--text-dark);
+            background: var(--white); border: 2px solid #e0e0e0; border-radius: 14px;
+            cursor: pointer; display: flex; align-items: center;
+            justify-content: center; gap: 8px; transition: var(--transition);
+        }
+        .clear-btn:hover { background: #fef2f2; border-color: var(--error-red); color: var(--error-red); }
+        .home-btn:hover { background: var(--light-blue); border-color: var(--primary-blue); color: var(--primary-blue); }
+
+        /* ===== QUICK INFO ===== */
+        .quick-info {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            margin-top: 28px; padding-top: 28px; border-top: 1px dashed #e0e0e0;
+        }
+        .info-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px;
+            background: #fafbfc; border-radius: 12px; transition: var(--transition);
+        }
+        .info-item:hover { background: var(--light-blue); }
+        .info-item i {
+            width: 32px; height: 32px; background: var(--primary-ultra-light);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; color: var(--primary-blue); font-size: 0.8rem; flex-shrink: 0;
+        }
+        .info-item span { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
+        .info-item .info-value { font-weight: 700; color: var(--primary-blue); }
+
+        .card-footer {
+            margin-top: 24px; padding-top: 18px; border-top: 1px solid #f0f0f0; text-align: center;
+        }
+        .card-footer p {
+            font-size: 0.76rem; color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .card-footer i { color: var(--primary-blue); }
+
+        /* ===== RESULTS CARD ===== */
+        .results-card {
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+            border-radius: 28px; padding: 38px 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08), 0 10px 25px rgba(0,0,0,0.04),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.8);
+            display: none; position: relative; overflow: hidden; margin-bottom: 24px;
+        }
+        .results-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--success-green), #4ade80, var(--success-green));
+            background-size: 200% 100%; animation: shimmer 3s infinite linear;
+        }
+        .results-card.show { display: block; animation: fadeInUp 0.5s ease-out; }
+
+        .results-toolbar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+        }
+        .results-title { display: flex; align-items: center; gap: 10px; }
+        .results-title i { font-size: 1.3rem; color: var(--primary-blue); }
+        .results-title h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+        .results-subtitle { font-size: 0.8rem; color: var(--text-light); margin-bottom: 16px; }
+
+        .sort-wrapper { display: flex; align-items: center; gap: 6px; }
+        .sort-wrapper label { font-size: 0.76rem; color: var(--text-muted); font-weight: 500; }
+        .sort-select {
+            padding: 5px 10px; font-size: 0.78rem; font-family: 'Poppins', sans-serif;
+            border: 1.5px solid var(--border-color); border-radius: 8px;
+            background: var(--white); color: var(--text-dark); cursor: pointer; outline: none;
+        }
+        .sort-select:focus { border-color: var(--primary-blue); }
+
+        .no-results { text-align: center; padding: 35px 20px; }
+        .no-results i { font-size: 2.4rem; color: #ddd; margin-bottom: 12px; display: block; }
+        .no-results h4 { font-size: 1rem; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .no-results p { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* ===== RESULT ITEM ===== */
+        .result-item {
+            background: var(--bg-light); border: 1.5px solid var(--border-color);
+            border-radius: 18px; padding: 22px; margin-bottom: 14px;
+            transition: var(--transition); animation: resultIn 0.5s ease-out both;
+            position: relative; overflow: hidden;
+        }
+        .result-item:hover { border-color: rgba(25,118,210,0.3); box-shadow: 0 8px 25px rgba(25,118,210,0.08); transform: translateY(-2px); }
+        @keyframes resultIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-stripe { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+        .stripe-high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .stripe-medium { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+        .stripe-low { background: linear-gradient(90deg, var(--primary-light), #90CAF9); }
+
+        .result-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+        .result-disease-name { font-size: 1rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 7px; }
+        .result-disease-name i { font-size: 0.9rem; color: var(--primary-blue); }
+        .result-meta { font-size: 0.7rem; color: var(--text-muted); margin-top: 3px; }
+
+        .pct-circle { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+        .pct-circle svg { transform: rotate(-90deg); width: 56px; height: 56px; }
+        .pct-circle .bg-ring { fill: none; stroke: #f1f5f9; stroke-width: 5; }
+        .pct-circle .fg-ring { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease-out; }
+        .pct-circle .pct-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 0.78rem; font-weight: 800; color: var(--text-dark); }
+
+        .result-bar { width: 100%; height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+        .result-bar-fill { height: 100%; border-radius: 3px; animation: barFill 0.8s ease-out; }
+        @keyframes barFill { from { width: 0; } }
+        .bar-high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .bar-medium { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
+        .bar-low { background: linear-gradient(90deg, var(--primary-light), #90CAF9); }
+
+        .result-symptoms { margin-bottom: 14px; }
+        .result-symptoms-label { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 7px; }
+        .result-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+        .result-chip { padding: 3px 9px; font-size: 0.7rem; font-weight: 500; border-radius: 50px; display: inline-flex; align-items: center; gap: 3px; }
+        .result-chip.matched { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .result-chip.unmatched { background: #f8fafc; color: #cbd5e1; border: 1px solid #e2e8f0; }
+
+        .result-advice {
+            background: var(--light-blue); border: 1px solid rgba(25,118,210,0.15);
+            border-radius: 12px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 8px;
+        }
+        .result-advice i { color: var(--primary-blue); font-size: 0.85rem; margin-top: 2px; flex-shrink: 0; }
+        .result-advice-text { font-size: 0.78rem; color: var(--text-light); line-height: 1.55; }
+        .result-advice-label { font-size: 0.64rem; font-weight: 700; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+
+        /* ===== DISCLAIMER ===== */
+        .disclaimer-card {
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+            border-radius: 18px; padding: 20px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid rgba(245,158,11,0.2); border-left: 5px solid var(--warning-orange);
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .disclaimer-card i { font-size: 1.1rem; color: var(--warning-orange); flex-shrink: 0; margin-top: 2px; }
+        .disclaimer-card p { font-size: 0.8rem; color: var(--text-light); line-height: 1.65; }
+        .disclaimer-card strong { color: #92400e; }
+
+        .page-footer { text-align: center; padding: 22px 20px; font-size: 0.74rem; color: rgba(255,255,255,0.5); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .main-content { padding: 25px 15px 50px; }
+            .checker-card, .results-card { padding: 32px 22px; border-radius: 22px; }
+            .stats-row { grid-template-columns: 1fr; gap: 10px; }
+            .header-container { flex-wrap: wrap; gap: 12px; }
+            .header-right { width: 100%; justify-content: space-between; }
+            .header-icon-wrap { width: 80px; height: 80px; }
+            .header-icon-wrap i { font-size: 2.2rem; }
+            .checker-header h2 { font-size: 1.5rem; }
+            .quick-info { grid-template-columns: 1fr; }
+            .result-top { flex-direction: column; }
+            .pct-circle { align-self: flex-end; margin-top: -35px; }
+            .results-toolbar { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 480px) {
+            .checker-card, .results-card { padding: 28px 16px; }
+            .logo-text h1 { font-size: 1.2rem; }
+            .user-name { display: none; }
+            .logout-btn span { display: none; }
+            .logout-btn { padding: 9px; }
+            .checker-header h2 { font-size: 1.3rem; }
+            .analyze-btn { padding: 16px 28px; font-size: 1rem; }
+            .disclaimer-card { flex-direction: column; text-align: center; }
+        }
+
+        @keyframes shakeX {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading Dashboard...</p>
+    </div>
+
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <header class="header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+                <div class="logo-text">
+                    <h1>Lifeline</h1>
+                    <span>Smart Health Assistance</span>
+                </div>
+            </a>
+            <div class="header-right">
+                <div class="user-info">
+                    <i class="fas fa-user-circle" style="color: var(--primary-blue); font-size: 1.2rem;"></i>
+                    <span class="user-name" id="userName">User</span>
+                </div>
+                <a href="index.html" class="home-header-btn" title="Back to Home">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-virus"></i></div>
+                <div><div class="stat-value" id="statDiseases">0</div><div class="stat-label">Diseases</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-microscope"></i></div>
+                <div><div class="stat-value" id="statSymptoms">0</div><div class="stat-label">Known Symptoms</div></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber"><i class="fas fa-clipboard-list"></i></div>
+                <div><div class="stat-value" id="statSelected">0</div><div class="stat-label">Selected</div></div>
+            </div>
+        </div>
+
+        <div class="checker-card">
+            <div class="checker-header">
+                <div class="header-icon-wrap">
+                    <i class="fas fa-stethoscope"></i>
+                    <div class="icon-badge"><i class="fas fa-search"></i></div>
+                </div>
+                <h2>Symptom Checker</h2>
+                <p>Enter your symptoms to find possible conditions</p>
+            </div>
+
+            <div class="message error" id="errorMsg"><i class="fas fa-exclamation-circle"></i><span id="errorText"></span></div>
+            <div class="message success" id="successMsg"><i class="fas fa-check-circle"></i><span id="successText"></span></div>
+            <div class="message warning" id="warningMsg"><i class="fas fa-exclamation-triangle"></i><span id="warningText"></span></div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-icon"><i class="fas fa-search-plus"></i></span>
+                        Enter Symptom
+                    </label>
+                    <div class="input-wrapper autocomplete-wrapper">
+                        <input type="text" class="form-input" id="symptomInput" placeholder="Type a symptom (e.g., headache, fever...)" autocomplete="off">
+                        <i class="fas fa-search input-icon"></i>
+                        <div class="autocomplete-list" id="suggestionsList"></div>
+                    </div>
+                </div>
+
+                <div class="tags-section">
+                    <div class="tags-header">
+                        <div class="tags-title">
+                            <i class="fas fa-tags"></i> Your Symptoms
+                            <span class="tags-count" id="tagsCount">0</span>
+                        </div>
+                    </div>
+                    <div class="tags-container" id="tagsContainer">
+                        <div class="tags-empty"><i class="fas fa-lightbulb"></i> No symptoms added yet</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="analyze-btn" id="analyzeBtn" disabled>
+                        <i class="fas fa-bolt btn-icon-main"></i>
+                        <span class="btn-text">Analyze Symptoms</span>
+                        <span class="spinner"></span>
+                    </button>
+                    <button class="clear-btn" id="clearBtn">
+                        <i class="fas fa-trash-alt"></i><span>Clear All Symptoms</span>
+                    </button>
+                    <a href="index.html" class="home-btn">
+                        <i class="fas fa-home"></i><span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="quick-info">
+                <div class="info-item">
+                    <i class="fas fa-database"></i>
+                    <span><span class="info-value" id="infoDiseasesCount">0</span> diseases in database</span>
+                </div>
+                <div class="info-item"><i class="fas fa-brain"></i><span>Smart symptom matching</span></div>
+                <div class="info-item"><i class="fas fa-shield-alt"></i><span>For awareness only</span></div>
+                <div class="info-item"><i class="fas fa-bolt"></i><span>Instant analysis</span></div>
+            </div>
+
+            <div class="card-footer">
+                <p><i class="fas fa-heartbeat"></i> Your health matters – Check symptoms, stay informed</p>
+            </div>
+        </div>
+
+        <div class="results-card" id="resultsCard">
+            <div class="results-toolbar">
+                <div class="results-title"><i class="fas fa-clipboard-check"></i><h3>Analysis Results</h3></div>
+                <div class="sort-wrapper">
+                    <label for="sortSelect">Sort:</label>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="percentage">Match %</option>
+                        <option value="name">Name A→Z</option>
+                        <option value="matched">Match Count</option>
+                    </select>
+                </div>
+            </div>
+            <div class="results-subtitle" id="resultsSubtitle"></div>
+            <div id="resultsContainer"></div>
+        </div>
+
+        <div class="disclaimer-card">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p><strong>Medical Disclaimer:</strong> This system provides health awareness only and does not replace professional diagnosis. <strong>Always consult a qualified healthcare professional.</strong></p>
+        </div>
+
+        <div class="page-footer">© 2026 Lifeline: Smart Health Assistance Web Application</div>
+    </main>
+
+    <script>
+        // =============================================
+        // CONFIGURATION
+        // =============================================
+        var MAX_RESULTS = 4;
+
+        // =============================================
+        // GET DISEASES FROM LOCALSTORAGE ONLY
+        // This ensures admin dashboard changes are reflected
+        // =============================================
+        function getDiseases() {
+            try {
+                var diseases = JSON.parse(localStorage.getItem('diseases')) || [];
+                return diseases;
+            } catch (e) {
+                console.error('Error reading diseases:', e);
+                return [];
+            }
+        }
+
+        // =============================================
+        // GET ALL UNIQUE SYMPTOMS FROM DATABASE
+        // =============================================
+        function getAllSymptoms() {
+            var diseases = getDiseases();
+            var set = {};
+            diseases.forEach(function(d) {
+                var symptoms = d.symptoms || [];
+                symptoms.forEach(function(s) {
+                    set[s.toLowerCase().trim()] = true;
+                });
+            });
+            return Object.keys(set).sort();
+        }
+
+        // =============================================
+        // STATE
+        // =============================================
+        var userSymptoms = [];
+        var currentResults = [];
+        var activeSugg = -1;
+
+        // =============================================
+        // DOM READY
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var cu = null;
+                try { cu = localStorage.getItem('currentUser'); } catch(e) {}
+
+                if (!cu) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                try {
+                    var user = JSON.parse(cu);
+                    document.getElementById('userName').textContent = user.name || 'User';
+                } catch(e) {
+                    document.getElementById('userName').textContent = 'User';
+                }
+
+                updateStats();
+                renderTags();
+                document.getElementById('loadingScreen').classList.add('hide');
+
+                console.log('%c🩺 Lifeline — Symptom Checker Dashboard', 'background: #1976D2; color: white; font-size: 14px; padding: 8px; border-radius: 4px;');
+                console.log('%c📊 Database loaded from localStorage', 'color: #16a34a;');
+                console.log('   Diseases: ' + getDiseases().length);
+                console.log('   Symptoms: ' + getAllSymptoms().length);
+            }, 600);
+        });
+
+        // =============================================
+        // UPDATE STATS
+        // =============================================
+        function updateStats() {
+            var diseases = getDiseases();
+            var symptoms = getAllSymptoms();
+            
+            document.getElementById('statDiseases').textContent = diseases.length;
+            document.getElementById('statSymptoms').textContent = symptoms.length;
+            document.getElementById('statSelected').textContent = userSymptoms.length;
+            document.getElementById('tagsCount').textContent = userSymptoms.length;
+            document.getElementById('infoDiseasesCount').textContent = diseases.length;
+        }
+
+        // =============================================
+        // MESSAGES
+        // =============================================
+        function showMsg(type, text) {
+            hideAllMsg();
+            var el = document.getElementById(type + 'Msg');
+            if (!el) return;
+            document.getElementById(type + 'Text').textContent = text;
+            el.classList.add('show');
+            setTimeout(function() { el.classList.remove('show'); }, 4000);
+        }
+
+        function hideAllMsg() {
+            var ids = ['errorMsg', 'successMsg', 'warningMsg'];
+            ids.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.classList.remove('show');
+            });
+        }
+
+        // =============================================
+        // SYMPTOM MANAGEMENT
+        // =============================================
+        function normalize(s) {
+            return s.toLowerCase().trim().replace(/[^a-z0-9\s\/\-]/g, '');
+        }
+
+        function addSymptom(raw) {
+            var s = normalize(raw);
+            if (!s || s.length < 2) {
+                showMsg('error', 'Please enter a valid symptom (at least 2 characters).');
+                var inp = document.getElementById('symptomInput');
+                inp.style.animation = 'shakeX 0.4s ease';
+                setTimeout(function() { inp.style.animation = ''; }, 400);
+                return;
+            }
+            if (userSymptoms.indexOf(s) !== -1) {
+                showMsg('warning', '"' + s + '" is already added.');
+                return;
+            }
+            userSymptoms.push(s);
+            renderTags();
+            document.getElementById('symptomInput').value = '';
+            document.getElementById('symptomInput').focus();
+            hideSuggestions();
+            showMsg('success', '"' + s + '" added successfully.');
+        }
+
+        function removeSymptom(s) {
+            var el = document.querySelector('[data-symptom="' + CSS.escape(s) + '"]');
+            if (el) {
+                el.classList.add('tag-removing');
+                setTimeout(function() {
+                    userSymptoms = userSymptoms.filter(function(x) { return x !== s; });
+                    renderTags();
+                }, 250);
+            } else {
+                userSymptoms = userSymptoms.filter(function(x) { return x !== s; });
+                renderTags();
+            }
+        }
+
+        function clearAll() {
+            if (!userSymptoms.length) return;
+            userSymptoms = [];
+            currentResults = [];
+            renderTags();
+            document.getElementById('resultsCard').classList.remove('show');
+            hideAllMsg();
+        }
+
+        function renderTags() {
+            var container = document.getElementById('tagsContainer');
+            container.innerHTML = '';
+
+            if (!userSymptoms.length) {
+                container.classList.remove('has-items');
+                container.innerHTML = '<div class="tags-empty"><i class="fas fa-lightbulb"></i> No symptoms added yet</div>';
+                document.getElementById('analyzeBtn').disabled = true;
+            } else {
+                container.classList.add('has-items');
+                userSymptoms.forEach(function(s) {
+                    var tag = document.createElement('div');
+                    tag.className = 'symptom-tag';
+                    tag.setAttribute('data-symptom', s);
+
+                    var dot = document.createElement('span');
+                    dot.className = 'tag-dot';
+                    tag.appendChild(dot);
+
+                    tag.appendChild(document.createTextNode(s));
+
+                    var rm = document.createElement('button');
+                    rm.className = 'tag-remove';
+                    rm.title = 'Remove';
+                    rm.innerHTML = '<i class="fas fa-times"></i>';
+                    rm.addEventListener('click', function() { removeSymptom(s); });
+                    tag.appendChild(rm);
+
+                    container.appendChild(tag);
+                });
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+            updateStats();
+        }
+
+        // =============================================
+        // AUTOCOMPLETE
+        // =============================================
+        function showSuggestions(q) {
+            var list = document.getElementById('suggestionsList');
+            if (!q || q.length < 1) { hideSuggestions(); return; }
+
+            var all = getAllSymptoms();
+            var query = q.toLowerCase().trim();
+            var matches = all.filter(function(s) {
+                return s.indexOf(query) !== -1 && userSymptoms.indexOf(s) === -1;
+            }).slice(0, 8);
+
+            if (!matches.length) {
+                list.innerHTML = '<div class="no-suggestions"><i class="fas fa-search"></i>No symptoms found for "' + q + '"</div>';
+                list.classList.add('show');
+                return;
+            }
+
+            list.innerHTML = '';
+            matches.forEach(function(symptomText, i) {
+                var item = document.createElement('div');
+                item.className = 'suggestion-item';
+                if (i === activeSugg) item.classList.add('active');
+
+                var icon = document.createElement('i');
+                icon.className = 'fas fa-plus-circle';
+                item.appendChild(icon);
+
+                var nameSpan = document.createElement('span');
+                nameSpan.className = 's-name';
+
+                var lower = symptomText.toLowerCase();
+                var idx = lower.indexOf(query);
+                if (idx !== -1 && query.length >= 2) {
+                    var before = symptomText.substring(0, idx);
+                    var match = symptomText.substring(idx, idx + query.length);
+                    var after = symptomText.substring(idx + query.length);
+                    if (before) nameSpan.appendChild(document.createTextNode(before));
+                    var strong = document.createElement('strong');
+                    strong.textContent = match;
+                    nameSpan.appendChild(strong);
+                    if (after) nameSpan.appendChild(document.createTextNode(after));
+                } else {
+                    nameSpan.textContent = symptomText;
+                }
+
+                item.appendChild(nameSpan);
+                item.addEventListener('click', function() { addSymptom(symptomText); });
+                list.appendChild(item);
+            });
+            list.classList.add('show');
+        }
+
+        function hideSuggestions() {
+            document.getElementById('suggestionsList').classList.remove('show');
+            activeSugg = -1;
+        }
+
+        // =============================================
+        // INPUT EVENTS
+        // =============================================
+        document.getElementById('symptomInput').addEventListener('input', function() {
+            activeSugg = -1;
+            showSuggestions(this.value.trim());
+        });
+
+        document.getElementById('symptomInput').addEventListener('focus', function() {
+            if (this.value.trim().length > 0) showSuggestions(this.value.trim());
+        });
+
+        document.getElementById('symptomInput').addEventListener('keydown', function(e) {
+            var items = document.getElementById('suggestionsList').querySelectorAll('.suggestion-item');
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeSugg >= 0 && items[activeSugg]) items[activeSugg].click();
+                else addSymptom(this.value);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeSugg = Math.min(activeSugg + 1, items.length - 1);
+                setActiveItem(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeSugg = Math.max(activeSugg - 1, -1);
+                setActiveItem(items);
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+
+        function setActiveItem(items) {
+            for (var i = 0; i < items.length; i++) {
+                if (i === activeSugg) items[i].classList.add('active');
+                else items[i].classList.remove('active');
+            }
+            if (activeSugg >= 0 && items[activeSugg]) {
+                items[activeSugg].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-wrapper')) hideSuggestions();
+        });
+
+        // =============================================
+        // ANALYZE
+        // =============================================
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            if (!userSymptoms.length) return;
+            hideAllMsg();
+
+            var btn = this;
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            setTimeout(function() {
+                var diseases = getDiseases();
+                var results = [];
+
+                diseases.forEach(function(disease) {
+                    // Support both 'name' and 'disease' field names
+                    var diseaseName = disease.name || disease.disease || 'Unknown';
+                    var diseaseSymptoms = (disease.symptoms || []).map(function(s) { 
+                        return s.toLowerCase().trim(); 
+                    });
+                    var diseaseAdvice = disease.advice || 'Consult a healthcare professional for proper diagnosis and treatment.';
+                    
+                    var matched = [];
+                    var unmatched = [];
+
+                    diseaseSymptoms.forEach(function(d) {
+                        var hit = userSymptoms.some(function(u) {
+                            return d === u || d.indexOf(u) !== -1 || u.indexOf(d) !== -1;
+                        });
+                        if (hit) matched.push(d);
+                        else unmatched.push(d);
+                    });
+
+                    if (matched.length > 0) {
+                        var mp = Math.round((matched.length / userSymptoms.length) * 100);
+                        var cp = Math.round((matched.length / diseaseSymptoms.length) * 100);
+                        var score = Math.round(mp * 0.6 + cp * 0.4);
+                        results.push({
+                            disease: diseaseName,
+                            matchedSymptoms: matched,
+                            unmatchedSymptoms: unmatched,
+                            totalDiseaseSymptoms: diseaseSymptoms.length,
+                            matchCount: matched.length,
+                            matchPercentage: Math.min(score, 100),
+                            advice: diseaseAdvice
+                        });
+                    }
+                });
+
+                results.sort(function(a, b) { return b.matchPercentage - a.matchPercentage; });
+                results = results.slice(0, MAX_RESULTS);
+                currentResults = results;
+
+                btn.classList.remove('loading');
+                btn.disabled = false;
+
+                renderResults(results);
+
+                if (results.length > 0) {
+                    showMsg('success', 'Top ' + results.length + ' possible condition(s) found.');
+                } else {
+                    showMsg('warning', 'No matching conditions found for your symptoms.');
+                }
+            }, 1200);
+        });
+
+        // =============================================
+        // CLEAR
+        // =============================================
+        document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+        // =============================================
+        // RENDER RESULTS
+        // =============================================
+        function renderResults(results) {
+            var card = document.getElementById('resultsCard');
+            var container = document.getElementById('resultsContainer');
+            var subtitle = document.getElementById('resultsSubtitle');
+
+            card.classList.add('show');
+            container.innerHTML = '';
+
+            subtitle.textContent = results.length
+                ? 'Top ' + results.length + ' match(es) for your ' + userSymptoms.length + ' symptom(s)'
+                : 'No conditions matched.';
+
+            if (!results.length) {
+                container.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><h4>No Matches Found</h4><p>Try different or additional symptoms.</p></div>';
+                return;
+            }
+
+            results.forEach(function(r, i) {
+                container.appendChild(buildResult(r, i));
+            });
+
+            setTimeout(function() {
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+
+        function buildResult(r, i) {
+            var item = document.createElement('div');
+            item.className = 'result-item';
+            item.style.animationDelay = (i * 0.1) + 's';
+
+            var sc = r.matchPercentage >= 60 ? 'high' : r.matchPercentage >= 35 ? 'medium' : 'low';
+            var color = sc === 'high' ? '#16a34a' : sc === 'medium' ? '#f59e0b' : '#64B5F6';
+            var circ = 2 * Math.PI * 22;
+            var off = circ - (r.matchPercentage / 100) * circ;
+
+            var chipsHTML = '';
+            r.matchedSymptoms.forEach(function(s) {
+                chipsHTML += '<span class="result-chip matched"><i class="fas fa-check"></i> ' + escapeHtml(s) + '</span>';
+            });
+            r.unmatchedSymptoms.slice(0, 4).forEach(function(s) {
+                chipsHTML += '<span class="result-chip unmatched"><i class="fas fa-circle"></i> ' + escapeHtml(s) + '</span>';
+            });
+
+            item.innerHTML =
+                '<div class="result-stripe stripe-' + sc + '"></div>' +
+                '<div class="result-top">' +
+                    '<div>' +
+                        '<div class="result-disease-name"><i class="fas fa-virus"></i> ' + escapeHtml(r.disease) + '</div>' +
+                        '<div class="result-meta">' + r.matchCount + '/' + r.totalDiseaseSymptoms + ' disease symptoms matched · ' + r.matchCount + '/' + userSymptoms.length + ' entered</div>' +
+                    '</div>' +
+                    '<div class="pct-circle">' +
+                        '<svg viewBox="0 0 50 50"><circle class="bg-ring" cx="25" cy="25" r="22"></circle>' +
+                        '<circle class="fg-ring" cx="25" cy="25" r="22" stroke="' + color + '" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"></circle></svg>' +
+                        '<div class="pct-num">' + r.matchPercentage + '%</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="result-bar"><div class="result-bar-fill bar-' + sc + '" style="width:' + r.matchPercentage + '%"></div></div>' +
+                '<div class="result-symptoms"><div class="result-symptoms-label">Symptom Breakdown</div><div class="result-chips">' + chipsHTML + '</div></div>' +
+                '<div class="result-advice"><i class="fas fa-lightbulb"></i><div class="result-advice-text"><span class="result-advice-label">Advice</span>' + escapeHtml(r.advice) + '</div></div>';
+
+            return item;
+        }
+
+        // =============================================
+        // ESCAPE HTML
+        // =============================================
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // =============================================
+        // SORT
+        // =============================================
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            if (!currentResults.length) return;
+            var s = currentResults.slice();
+            switch (this.value) {
+                case 'percentage': s.sort(function(a, b) { return b.matchPercentage - a.matchPercentage; }); break;
+                case 'name': s.sort(function(a, b) { return a.disease.localeCompare(b.disease); }); break;
+                case 'matched': s.sort(function(a, b) { return b.matchCount - a.matchCount; }); break;
+            }
+            renderResults(s);
+        });
+
+        // =============================================
+        // LOGOUT
+        // =============================================
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Lifeline: Smart Health Assistance</title>
+    <style>
+        /* =============================================
+           CSS CUSTOM PROPERTIES & RESET
+           ============================================= */
+        :root {
+            /* Primary Colors */
+            --primary: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-deeper: #0D47A1;
+            --primary-light: #64B5F6;
+            --primary-ultra-light: #E3F2FD;
+            
+            /* Admin Theme Colors */
+            --admin-amber: #f59e0b;
+            --admin-amber-dark: #d97706;
+            --admin-amber-light: #fbbf24;
+            
+            /* Text Colors */
+            --text-dark: #1E293B;
+            --text-medium: #475569;
+            --text-light: #94a3b8;
+            
+            /* Background Colors */
+            --bg-white: #ffffff;
+            --bg-light: #F8FAFC;
+            
+            /* Border Colors */
+            --border-light: #e2e8f0;
+            --border-blue: #BBDEFB;
+            
+            /* Status Colors */
+            --error: #ef4444;
+            --error-light: #fef2f2;
+            --error-border: #fecaca;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --success-border: #bbf7d0;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --warning-border: #fde68a;
+            --info: #0ea5e9;
+            --info-light: #f0f9ff;
+            --info-border: #bae6fd;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+            --shadow-card: 0 8px 30px rgba(0,0,0,0.12);
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s ease;
+            
+            /* Typography */
+            --font-main: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =============================================
+           BACKGROUND DECORATIONS
+           ============================================= */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb-1 {
+            top: -10%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            animation: orbFloat 15s ease-in-out infinite;
+        }
+
+        .bg-orb-2 {
+            bottom: -15%;
+            left: -8%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(13,71,161,0.2) 0%, transparent 70%);
+            animation: orbFloat 12s ease-in-out infinite reverse;
+        }
+
+        /* =============================================
+           ANIMATIONS
+           ============================================= */
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.03); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* =============================================
+           LOADING SCREEN
+           ============================================= */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* =============================================
+           HEADER
+           ============================================= */
+        .header {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--admin-amber) 0%, var(--admin-amber-dark) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+        }
+
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .brand-text span {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--admin-amber);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            font-size: 0.88rem;
+            font-weight: 600;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-home {
+            background: var(--primary-ultra-light);
+            color: var(--primary);
+            border: 1px solid var(--border-blue);
+        }
+
+        .btn-home:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(25,118,210,0.3);
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239,68,68,0.4);
+        }
+
+        /* =============================================
+           MAIN CONTENT
+           ============================================= */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 24px 60px;
+        }
+
+        /* =============================================
+           SECTION STYLES
+           ============================================= */
+        .section {
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        .section:nth-child(5) { animation-delay: 0.4s; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.15);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 2px;
+        }
+
+        /* =============================================
+           CARDS
+           ============================================= */
+        .card {
+            background: rgba(255,255,255,0.98);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* =============================================
+           STATS GRID
+           ============================================= */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.98);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card.users { border-left: 4px solid var(--primary); }
+        .stat-card.diseases { border-left: 4px solid var(--success); }
+        .stat-card.symptoms { border-left: 4px solid var(--admin-amber); }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-card.users .stat-icon {
+            background: var(--primary-ultra-light);
+        }
+
+        .stat-card.diseases .stat-icon {
+            background: var(--success-light);
+        }
+
+        .stat-card.symptoms .stat-icon {
+            background: var(--warning-light);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* =============================================
+           FORM STYLES
+           ============================================= */
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-label .label-icon {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-light);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--admin-amber);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(245,158,11,0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* =============================================
+           BUTTONS
+           ============================================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--admin-amber) 0%, var(--admin-amber-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(245,158,11,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(25,118,210,0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(25,118,210,0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.25);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239,68,68,0.35);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #15803d 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(22,163,74,0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(22,163,74,0.4);
+        }
+
+        .btn-icon {
+            font-size: 1.1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* =============================================
+           ALERT MESSAGES
+           ============================================= */
+        .alert {
+            display: none;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            align-items: center;
+            gap: 12px;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-success {
+            background: var(--success-light);
+            border: 1px solid var(--success-border);
+            color: #15803d;
+        }
+
+        .alert-error {
+            background: var(--error-light);
+            border: 1px solid var(--error-border);
+            color: #b91c1c;
+        }
+
+        .alert-warning {
+            background: var(--warning-light);
+            border: 1px solid var(--warning-border);
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: var(--info-light);
+            border: 1px solid var(--info-border);
+            color: #0369a1;
+        }
+
+        .alert-icon {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           DISEASE LIST
+           ============================================= */
+        .disease-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .disease-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .disease-list::-webkit-scrollbar-track {
+            background: var(--bg-light);
+            border-radius: 3px;
+        }
+
+        .disease-list::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+
+        .disease-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
+
+        .disease-item {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .disease-item:hover {
+            border-color: var(--border-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .disease-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .disease-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .disease-name .name-icon {
+            font-size: 1.1rem;
+        }
+
+        .disease-meta {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .disease-symptoms {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .symptom-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--primary-ultra-light);
+            color: var(--primary-dark);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid var(--border-blue);
+        }
+
+        .symptom-tag .tag-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .disease-advice {
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.2);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .disease-advice .advice-icon {
+            font-size: 1rem;
+            color: var(--admin-amber);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .disease-advice-text {
+            font-size: 0.82rem;
+            color: var(--text-medium);
+            line-height: 1.55;
+        }
+
+        .disease-advice-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--admin-amber-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            opacity: 0.4;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+        }
+
+        /* =============================================
+           MONITORING LIST
+           ============================================= */
+        .monitoring-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .monitoring-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+
+        .monitoring-item:hover {
+            border-color: var(--primary-light);
+            background: white;
+        }
+
+        .monitoring-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .monitoring-name .m-icon {
+            font-size: 1rem;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .monitoring-name .m-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .monitoring-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            background: var(--success-light);
+            color: var(--success);
+            border-radius: var(--radius-full);
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: 1px solid var(--success-border);
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           TWO COLUMN LAYOUT
+           ============================================= */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* =============================================
+           SEARCH & FILTER
+           ============================================= */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            font-size: 0.9rem;
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(25,118,210,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .page-footer {
+            text-align: center;
+            padding: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-footer p {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* =============================================
+           RESPONSIVE
+           ============================================= */
+        @media (max-width: 1024px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .main-content {
+                padding: 20px 16px 50px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+
+            .stat-value {
+                font-size: 1.6rem;
+            }
+
+            .monitoring-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-btn span {
+                display: none;
+            }
+
+            .header-btn {
+                padding: 10px 14px;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.88rem;
+            }
+
+            .disease-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Decorations -->
+    <div class="bg-pattern"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading Admin Dashboard...</p>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- HEADER                                        -->
+    <!-- ============================================= -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-brand">
+                <div class="brand-icon">🛡️</div>
+                <div class="brand-text">
+                    <h1>Lifeline – Admin Dashboard</h1>
+                    <span>System Control Panel</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="header-btn btn-home">
+                    🏠 <span>Back to Home</span>
+                </a>
+                <button class="header-btn btn-logout" id="logoutBtn">
+                    🚪 <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================= -->
+    <!-- MAIN CONTENT                                  -->
+    <!-- ============================================= -->
+    <main class="main-content">
+
+        <!-- ========== SYSTEM OVERVIEW ========== -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <div>
+                    <h2 class="section-title">System Overview</h2>
+                    <p class="section-subtitle">Real-time system statistics</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card users">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Registered Users</div>
+                    </div>
+                </div>
+                <div class="stat-card diseases">
+                    <div class="stat-icon">🦠</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalDiseases">0</div>
+                        <div class="stat-label">Diseases in Database</div>
+                    </div>
+                </div>
+                <div class="stat-card symptoms">
+                    <div class="stat-icon">🩺</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalSymptoms">0</div>
+                        <div class="stat-label">Unique Symptoms</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== ADD NEW DISEASE ========== -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">➕</div>
+                <div>
+                    <h2 class="section-title">Add New Disease</h2>
+                    <p class="section-subtitle">Add diseases to the symptom checker database</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="alert alert-success" id="addDiseaseSuccess">
+                    <span class="alert-icon">✅</span>
+                    <span id="addDiseaseSuccessText"></span>
+                </div>
+                <div class="alert alert-error" id="addDiseaseError">
+                    <span class="alert-icon">🚫</span>
+                    <span id="addDiseaseErrorText"></span>
+                </div>
+
+                <form id="addDiseaseForm">
+                    <div class="form-grid">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="diseaseName">
+                                    <span class="label-icon">🏷️</span>
+                                    Disease Name
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="diseaseName" 
+                                    class="form-input" 
+                                    placeholder="e.g., Dengue Fever"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="diseaseSymptoms">
+                                    <span class="label-icon">📋</span>
+                                    Symptoms (comma-separated)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="diseaseSymptoms" 
+                                    class="form-input" 
+                                    placeholder="e.g., fever, headache, joint pain, rash"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label" for="diseaseAdvice">
+                                <span class="label-icon">💊</span>
+                                Medical Advice
+                            </label>
+                            <textarea 
+                                id="diseaseAdvice" 
+                                class="form-textarea" 
+                                placeholder="e.g., Seek medical attention immediately and stay hydrated. Rest and take prescribed medications."
+                                required
+                            ></textarea>
+                            <span class="form-hint">💡 Provide helpful advice for patients experiencing these symptoms</span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-icon">➕</span>
+                                Add Disease
+                            </button>
+                            <button type="button" class="btn btn-success" id="resetDatabaseBtn">
+                                <span class="btn-icon">🔄</span>
+                                Reset to Default (70 Diseases)
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========== TWO COLUMN: ADD SYMPTOMS & MONITORING ========== -->
+        <div class="two-col">
+            <!-- Add Symptoms to Existing Disease -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon">💉</div>
+                    <div>
+                        <h2 class="section-title">Add Symptoms to Disease</h2>
+                        <p class="section-subtitle">Expand existing disease profiles</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="alert alert-success" id="addSymptomSuccess">
+                        <span class="alert-icon">✅</span>
+                        <span id="addSymptomSuccessText"></span>
+                    </div>
+                    <div class="alert alert-error" id="addSymptomError">
+                        <span class="alert-icon">🚫</span>
+                        <span id="addSymptomErrorText"></span>
+                    </div>
+
+                    <form id="addSymptomForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="selectDisease">
+                                    <span class="label-icon">🦠</span>
+                                    Select Disease
+                                </label>
+                                <select id="selectDisease" class="form-select" required>
+                                    <option value="">-- Choose a disease --</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="newSymptom">
+                                    <span class="label-icon">➕</span>
+                                    New Symptom(s)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="newSymptom" 
+                                    class="form-input" 
+                                    placeholder="e.g., body ache, chills"
+                                    required
+                                >
+                                <span class="form-hint">💡 Separate multiple symptoms with commas</span>
+                            </div>
+
+                            <div>
+                                <button type="submit" class="btn btn-secondary">
+                                    <span class="btn-icon">💉</span>
+                                    Add Symptom(s)
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Database Monitoring -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon">📈</div>
+                    <div>
+                        <h2 class="section-title">Database Monitoring</h2>
+                        <p class="section-subtitle">Symptom count per disease</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="monitoring-list" id="monitoringList">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ========== DISEASE DATABASE ========== -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">📚</div>
+                <div>
+                    <h2 class="section-title">Disease Database</h2>
+                    <p class="section-subtitle">All diseases available in the symptom checker</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="alert alert-success" id="deleteDiseaseSuccess">
+                    <span class="alert-icon">✅</span>
+                    <span id="deleteDiseaseSuccessText"></span>
+                </div>
+
+                <!-- Search Box -->
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        id="searchDisease" 
+                        class="search-input" 
+                        placeholder="Search diseases..."
+                    >
+                </div>
+
+                <div class="disease-list" id="diseaseList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================= -->
+    <!-- FOOTER                                        -->
+    <!-- ============================================= -->
+    <footer class="page-footer">
+        <p>© 2026 Lifeline: Smart Health Assistance Web Application — Admin Panel</p>
+    </footer>
+
+    <!-- ============================================= -->
+    <!-- JAVASCRIPT                                    -->
+    <!-- ============================================= -->
+    <script>
+        // =============================================
+        // COMPLETE DEFAULT DISEASE DATABASE (70 DISEASES)
+        // Original 35 detailed entries + 35 additional
+        // entries from the secondary diseaseDatabase list
+        // (alternate names & shorthand variants included)
+        // =============================================
+        const DEFAULT_DISEASES = [
+            // ===== ORIGINAL 35 DISEASES (Detailed) =====
+            {
+                id: 'd1',
+                name: 'Common Cold',
+                symptoms: ['cough','cold', 'sore throat', 'runny nose', 'sneezing', 'fatigue', 'mild fever', 'congestion', 'watery eyes', 'body ache'],
+                advice: 'Rest well, stay hydrated, drink warm fluids, and take over-the-counter cold medication if needed. Symptoms usually resolve within 7–10 days.'
+            },
+            {
+                id: 'd2',
+                name: 'Influenza (Flu)',
+                symptoms: ['fever', 'cough', 'sore throat', 'headache', 'muscle pain', 'fatigue', 'chills', 'body ache', 'runny nose', 'weakness'],
+                advice: 'Get plenty of rest, drink fluids, and consider antiviral medications. Seek medical attention if symptoms are severe or if you are in a high-risk group.'
+            },
+            {
+                id: 'd3',
+                name: 'Migraine',
+                symptoms: ['severe headache', 'headache', 'nausea', 'dizziness', 'sensitivity to light', 'sensitivity to sound', 'blurred vision', 'throbbing pain', 'vomiting'],
+                advice: 'Rest in a quiet, dark room. Stay hydrated and take prescribed pain relief medication. If migraines are frequent, consult a neurologist.'
+            },
+            {
+                id: 'd4',
+                name: 'Food Poisoning',
+                symptoms: ['nausea', 'vomiting', 'diarrhea', 'abdominal pain', 'stomach pain', 'fever', 'weakness', 'dehydration', 'cramps'],
+                advice: 'Stay hydrated with oral rehydration solutions. Eat bland foods when possible. Seek emergency care if symptoms persist beyond 48 hours or include bloody stools.'
+            },
+            {
+                id: 'd5',
+                name: 'Allergic Rhinitis',
+                symptoms: ['sneezing', 'runny nose', 'itchy eyes', 'congestion', 'cough', 'watery eyes', 'nasal congestion', 'throat irritation'],
+                advice: 'Avoid known allergens. Take antihistamines as directed. For severe allergic reactions (anaphylaxis), seek emergency medical attention immediately.'
+            },
+            {
+                id: 'd6',
+                name: 'COVID-19',
+                symptoms: ['fever', 'cough', 'fatigue', 'loss of taste', 'loss of smell', 'shortness of breath', 'sore throat', 'body ache', 'headache', 'congestion', 'diarrhea'],
+                advice: 'Isolate yourself, monitor oxygen levels, stay hydrated, and rest. Seek immediate medical attention if you experience difficulty breathing or persistent chest pain.'
+            },
+            {
+                id: 'd7',
+                name: 'Dengue Fever',
+                symptoms: ['high fever', 'fever', 'headache', 'joint pain', 'muscle pain', 'rash', 'nausea', 'fatigue', 'bleeding gums', 'body ache', 'eye pain'],
+                advice: 'There is no specific treatment. Rest, drink plenty of fluids, and take acetaminophen for pain. Avoid aspirin. Seek emergency care if warning signs develop.'
+            },
+            {
+                id: 'd8',
+                name: 'Malaria',
+                symptoms: ['fever', 'chills', 'sweating', 'headache', 'nausea', 'fatigue', 'vomiting', 'body ache', 'muscle pain', 'diarrhea'],
+                advice: 'Seek immediate medical treatment. Malaria requires prescription antimalarial medications. Early treatment is crucial.'
+            },
+            {
+                id: 'd9',
+                name: 'Typhoid',
+                symptoms: ['fever', 'abdominal pain', 'weakness', 'headache', 'loss of appetite', 'diarrhea', 'constipation', 'rash', 'fatigue'],
+                advice: 'Consult a doctor for antibiotic treatment. Stay hydrated and maintain good hygiene to prevent spread.'
+            },
+            {
+                id: 'd10',
+                name: 'Gastritis',
+                symptoms: ['stomach pain', 'nausea', 'vomiting', 'bloating', 'indigestion', 'loss of appetite', 'abdominal pain', 'heartburn'],
+                advice: 'Avoid spicy and acidic foods. Eat smaller meals more frequently. Take antacids if recommended. Consult a gastroenterologist for persistent symptoms.'
+            },
+            {
+                id: 'd11',
+                name: 'Acid Reflux (GERD)',
+                symptoms: ['heartburn', 'chest discomfort', 'nausea', 'sour taste', 'bloating', 'difficulty swallowing', 'cough', 'throat irritation'],
+                advice: 'Avoid trigger foods like spicy, fatty, or acidic items. Eat smaller meals and do not lie down immediately after eating. Consult a doctor if symptoms persist.'
+            },
+            {
+                id: 'd12',
+                name: 'Asthma',
+                symptoms: ['shortness of breath', 'chest tightness', 'coughing', 'wheezing', 'difficulty breathing', 'cough', 'fatigue'],
+                advice: 'Use prescribed inhalers as directed. Avoid triggers like dust, smoke, pollen, and allergens. Seek emergency care for severe attacks.'
+            },
+            {
+                id: 'd13',
+                name: 'Bronchitis',
+                symptoms: ['persistent cough', 'cough', 'mucus production', 'fatigue', 'chest discomfort', 'shortness of breath', 'mild fever', 'sore throat'],
+                advice: 'Rest, drink plenty of fluids, use a humidifier, and avoid irritants like smoke. Consult your doctor if symptoms last more than 3 weeks or worsen.'
+            },
+            {
+                id: 'd14',
+                name: 'Pneumonia',
+                symptoms: ['cough', 'fever', 'chest pain', 'shortness of breath', 'fatigue', 'chills', 'nausea', 'vomiting', 'difficulty breathing', 'sweating'],
+                advice: 'Seek medical attention immediately. Pneumonia often requires antibiotics and may need hospitalization in severe cases.'
+            },
+            {
+                id: 'd15',
+                name: 'Sinusitis',
+                symptoms: ['headache', 'facial pain', 'nasal congestion', 'runny nose', 'cough', 'fever', 'fatigue', 'sore throat', 'pressure around eyes'],
+                advice: 'Use nasal decongestants, try steam inhalation, and stay hydrated. See a doctor if symptoms persist beyond 10 days or worsen.'
+            },
+            {
+                id: 'd16',
+                name: 'Urinary Tract Infection',
+                symptoms: ['burning urination', 'frequent urination', 'abdominal pain', 'fever', 'cloudy urine', 'pelvic pain', 'strong urine odor', 'back pain'],
+                advice: 'Drink plenty of water and see a doctor for antibiotic treatment. Do not delay treatment as UTIs can spread to kidneys.'
+            },
+            {
+                id: 'd17',
+                name: 'Kidney Stones',
+                symptoms: ['severe abdominal pain', 'back pain', 'nausea', 'vomiting', 'burning urination', 'blood in urine', 'frequent urination'],
+                advice: 'Drink plenty of water to help pass small stones. Larger stones may require medical procedures. Seek immediate care for severe pain.'
+            },
+            {
+                id: 'd18',
+                name: 'Appendicitis',
+                symptoms: ['lower abdominal pain', 'abdominal pain', 'fever', 'nausea', 'vomiting', 'loss of appetite', 'bloating'],
+                advice: 'Seek emergency medical attention immediately. Appendicitis usually requires surgical removal of the appendix.'
+            },
+            {
+                id: 'd19',
+                name: 'Diabetes (Early Signs)',
+                symptoms: ['frequent urination', 'excessive thirst', 'fatigue', 'blurred vision', 'weight loss', 'slow healing', 'numbness', 'hunger'],
+                advice: 'Consult a doctor for blood sugar testing and diagnosis. Manage diet, exercise regularly, and take prescribed medications.'
+            },
+            {
+                id: 'd20',
+                name: 'Hypertension',
+                symptoms: ['headache', 'dizziness', 'chest pain', 'fatigue', 'shortness of breath', 'blurred vision', 'nosebleed'],
+                advice: 'Monitor blood pressure regularly. Reduce salt intake, exercise, manage stress, and take prescribed medications. Seek care for severe symptoms.'
+            },
+            {
+                id: 'd21',
+                name: 'Anemia',
+                symptoms: ['fatigue', 'weakness', 'pale skin', 'dizziness', 'shortness of breath', 'cold hands', 'headache', 'chest pain'],
+                advice: 'Eat iron-rich foods like spinach, red meat, and beans. Take iron supplements if prescribed. Consult a doctor for proper diagnosis.'
+            },
+            {
+                id: 'd22',
+                name: 'Dehydration',
+                symptoms: ['dry mouth', 'dizziness', 'fatigue', 'headache', 'dark urine', 'thirst', 'confusion', 'weakness'],
+                advice: 'Drink water and oral rehydration solutions immediately. Avoid caffeine and alcohol. Seek medical care if symptoms are severe.'
+            },
+            {
+                id: 'd23',
+                name: 'Heat Stroke',
+                symptoms: ['high body temperature', 'confusion', 'headache', 'nausea', 'rapid heartbeat', 'dizziness', 'hot skin', 'vomiting'],
+                advice: 'This is a medical emergency. Move to a cool area immediately, apply cold compresses, and call emergency services right away.'
+            },
+            {
+                id: 'd24',
+                name: 'Anxiety Disorder',
+                symptoms: ['chest pain', 'shortness of breath', 'dizziness', 'rapid heartbeat', 'sweating', 'trembling', 'nausea', 'fear', 'numbness'],
+                advice: 'Practice deep breathing and relaxation techniques. Consult a mental health professional for therapy and possible medication.'
+            },
+            {
+                id: 'd25',
+                name: 'Depression',
+                symptoms: ['fatigue', 'sadness', 'sleep problems', 'loss of interest', 'weight changes', 'difficulty concentrating', 'hopelessness', 'body ache'],
+                advice: 'Reach out to a mental health professional. Consider therapy, support groups, and prescribed medications. You are not alone.'
+            },
+            {
+                id: 'd26',
+                name: 'Chickenpox',
+                symptoms: ['fever', 'rash', 'itching', 'fatigue', 'headache', 'loss of appetite', 'body ache'],
+                advice: 'Rest at home, avoid scratching, use calamine lotion for itching. Stay isolated to prevent spreading. Consult a doctor if complications arise.'
+            },
+            {
+                id: 'd27',
+                name: 'Measles',
+                symptoms: ['fever', 'rash', 'cough', 'runny nose', 'red eyes', 'sensitivity to light', 'fatigue', 'sore throat'],
+                advice: 'Rest, stay hydrated, take fever reducers if needed. Stay isolated to prevent spreading. Vaccination is the best prevention.'
+            },
+            {
+                id: 'd28',
+                name: 'Tuberculosis',
+                symptoms: ['persistent cough', 'cough', 'chest pain', 'weight loss', 'night sweats', 'fever', 'fatigue', 'coughing blood'],
+                advice: 'Seek immediate medical attention. TB requires a long course of antibiotics (usually 6-9 months). Complete the full treatment.'
+            },
+            {
+                id: 'd29',
+                name: 'Food Allergy',
+                symptoms: ['rash', 'itching', 'swelling', 'nausea', 'vomiting', 'abdominal pain', 'diarrhea', 'difficulty breathing', 'dizziness'],
+                advice: 'Avoid known trigger foods. Carry epinephrine auto-injector if prescribed. Seek emergency care for severe reactions (anaphylaxis).'
+            },
+            {
+                id: 'd30',
+                name: 'Ear Infection',
+                symptoms: ['ear pain', 'fever', 'hearing difficulty', 'dizziness', 'fluid drainage', 'headache', 'irritability'],
+                advice: 'Consult a doctor for proper diagnosis. May require antibiotics. Use warm compresses for pain relief.'
+            },
+            {
+                id: 'd31',
+                name: 'Conjunctivitis (Pink Eye)',
+                symptoms: ['red eyes', 'itching', 'watery eyes', 'irritation', 'discharge', 'sensitivity to light', 'swollen eyelids'],
+                advice: 'Avoid touching eyes and wash hands frequently. Use prescribed eye drops. Bacterial conjunctivitis may need antibiotic drops.'
+            },
+            {
+                id: 'd32',
+                name: 'Strep Throat',
+                symptoms: ['sore throat', 'fever', 'headache', 'swollen lymph nodes', 'difficulty swallowing', 'rash', 'nausea', 'body ache'],
+                advice: 'See a doctor for strep test and antibiotics. Rest, stay hydrated, and gargle with warm salt water for relief.'
+            },
+            {
+                id: 'd33',
+                name: 'Vertigo',
+                symptoms: ['dizziness', 'nausea', 'balance problems', 'vomiting', 'headache', 'ringing in ears', 'sweating'],
+                advice: 'Avoid sudden head movements. Sit or lie down when dizzy. Consult an ENT specialist for proper diagnosis and treatment.'
+            },
+            {
+                id: 'd34',
+                name: 'Iron Deficiency',
+                symptoms: ['fatigue', 'weakness', 'pale skin', 'brittle nails', 'cold hands', 'dizziness', 'headache', 'shortness of breath'],
+                advice: 'Increase iron-rich foods in your diet. Take iron supplements as prescribed. Consult a doctor for underlying causes.'
+            },
+            {
+                id: 'd35',
+                name: 'Irritable Bowel Syndrome (IBS)',
+                symptoms: ['abdominal pain', 'bloating', 'diarrhea', 'constipation', 'cramps', 'gas', 'nausea'],
+                advice: 'Manage stress, follow a balanced diet, avoid trigger foods. Keep a food diary to identify triggers. Consult a gastroenterologist.'
+            },
+
+            // ===== ADDITIONAL 35 DISEASES (From secondary diseaseDatabase) =====
+            // These use alternate / shorthand names so the symptom checker
+            // can match users who type either variant.
+            {
+                id: 'd36',
+                name: 'Flu',
+                symptoms: ['fever', 'cough', 'sore throat', 'headache', 'muscle pain', 'fatigue', 'chills', 'body ache', 'runny nose', 'weakness'],
+                advice: 'Get plenty of rest, drink fluids, and consider antiviral medications. Seek medical attention if severe.'
+            },
+            {
+                id: 'd37',
+                name: 'Stomach Flu (Gastroenteritis)',
+                symptoms: ['nausea', 'vomiting', 'diarrhea', 'abdominal pain', 'stomach pain', 'fever', 'weakness', 'dehydration', 'cramps', 'headache', 'body ache'],
+                advice: 'Stay hydrated with oral rehydration solutions. Eat bland foods like bananas, rice, toast. Seek emergency care if symptoms persist beyond 48 hours.'
+            },
+            {
+                id: 'd38',
+                name: 'Seasonal Allergies',
+                symptoms: ['sneezing', 'runny nose', 'itchy eyes', 'congestion', 'cough', 'watery eyes', 'nasal congestion', 'throat irritation', 'postnasal drip'],
+                advice: 'Avoid known allergens. Take antihistamines as directed. Use nasal sprays. For severe allergic reactions seek emergency care.'
+            },
+            {
+                id: 'd39',
+                name: 'UTI',
+                symptoms: ['burning urination', 'frequent urination', 'abdominal pain', 'fever', 'cloudy urine', 'pelvic pain', 'strong urine odor', 'back pain'],
+                advice: 'Drink water and see a doctor for antibiotic treatment. Do not delay treatment as UTIs can spread to kidneys.'
+            },
+            {
+                id: 'd40',
+                name: 'Diabetes (Early)',
+                symptoms: ['frequent urination', 'excessive thirst', 'fatigue', 'blurred vision', 'weight loss', 'slow healing', 'numbness', 'hunger'],
+                advice: 'Consult a doctor for blood sugar testing. Manage diet and exercise regularly. Take prescribed medications.'
+            },
+            {
+                id: 'd41',
+                name: 'Anxiety',
+                symptoms: ['chest pain', 'shortness of breath', 'dizziness', 'rapid heartbeat', 'sweating', 'trembling', 'nausea', 'fear', 'numbness'],
+                advice: 'Practice deep breathing and relaxation techniques. Consult a mental health professional for therapy and possible medication.'
+            },
+            {
+                id: 'd42',
+                name: 'Conjunctivitis',
+                symptoms: ['red eyes', 'itching', 'watery eyes', 'irritation', 'discharge', 'sensitivity to light', 'swollen eyelids'],
+                advice: 'Avoid touching eyes. Use prescribed eye drops. Practice hygiene. Wash hands frequently.'
+            },
+            {
+                id: 'd43',
+                name: 'IBS',
+                symptoms: ['abdominal pain', 'bloating', 'diarrhea', 'constipation', 'cramps', 'gas', 'nausea'],
+                advice: 'Manage stress, follow balanced diet, avoid trigger foods. Keep a food diary to identify triggers.'
+            },
+            {
+                id: 'd44',
+                name: 'Tonsillitis',
+                symptoms: ['sore throat', 'fever', 'swollen tonsils', 'difficulty swallowing', 'headache', 'ear pain', 'bad breath', 'stiff neck', 'fatigue'],
+                advice: 'Rest, drink warm fluids, gargle with salt water. See a doctor if symptoms are severe — antibiotics may be needed for bacterial tonsillitis.'
+            },
+            {
+                id: 'd45',
+                name: 'Gastroesophageal Reflux',
+                symptoms: ['heartburn', 'chest discomfort', 'nausea', 'sour taste', 'bloating', 'difficulty swallowing', 'cough', 'throat irritation', 'regurgitation'],
+                advice: 'Avoid trigger foods. Eat smaller meals. Elevate head while sleeping. Consult a doctor if symptoms persist.'
+            },
+            {
+                id: 'd46',
+                name: 'Chronic Fatigue Syndrome',
+                symptoms: ['fatigue', 'weakness', 'muscle pain', 'headache', 'sleep problems', 'difficulty concentrating', 'sore throat', 'joint pain', 'dizziness'],
+                advice: 'Pace yourself and avoid overexertion. Maintain a regular sleep schedule. Consult a doctor for a comprehensive management plan.'
+            },
+            {
+                id: 'd47',
+                name: 'Hypothyroidism',
+                symptoms: ['fatigue', 'weight gain', 'cold sensitivity', 'dry skin', 'constipation', 'muscle weakness', 'depression', 'joint pain', 'hair loss', 'slow heartbeat'],
+                advice: 'Consult an endocrinologist. Hypothyroidism is managed with daily thyroid hormone replacement medication. Regular blood tests are essential.'
+            },
+            {
+                id: 'd48',
+                name: 'Hyperthyroidism',
+                symptoms: ['weight loss', 'rapid heartbeat', 'anxiety', 'trembling', 'sweating', 'heat sensitivity', 'fatigue', 'muscle weakness', 'insomnia', 'diarrhea'],
+                advice: 'Seek medical evaluation. Treatment options include anti-thyroid medications, radioactive iodine, or surgery. Regular monitoring is required.'
+            },
+            {
+                id: 'd49',
+                name: 'Gout',
+                symptoms: ['joint pain', 'swelling', 'redness', 'warmth in joint', 'stiffness', 'severe pain in big toe', 'fever', 'limited range of motion'],
+                advice: 'Rest the affected joint. Apply ice. Take prescribed anti-inflammatory medications. Avoid high-purine foods like red meat and alcohol.'
+            },
+            {
+                id: 'd50',
+                name: 'Rheumatoid Arthritis',
+                symptoms: ['joint pain', 'joint swelling', 'stiffness', 'fatigue', 'fever', 'weight loss', 'weakness', 'numbness', 'reduced range of motion'],
+                advice: 'Consult a rheumatologist for early treatment. Medications can slow disease progression. Regular exercise and physical therapy help maintain mobility.'
+            },
+            {
+                id: 'd51',
+                name: 'Osteoarthritis',
+                symptoms: ['joint pain', 'stiffness', 'swelling', 'reduced flexibility', 'bone spurs', 'crackling sound in joints', 'tenderness'],
+                advice: 'Maintain a healthy weight. Exercise regularly with low-impact activities. Physical therapy and pain medications can help. Consult an orthopedic specialist.'
+            },
+            {
+                id: 'd52',
+                name: 'Sciatica',
+                symptoms: ['lower back pain', 'back pain', 'leg pain', 'numbness', 'tingling', 'muscle weakness', 'shooting pain', 'difficulty sitting'],
+                advice: 'Apply hot or cold packs. Stretch gently. Take over-the-counter pain relief. See a doctor if pain is severe or lasts more than a week.'
+            },
+            {
+                id: 'd53',
+                name: 'Psoriasis',
+                symptoms: ['red patches on skin', 'dry skin', 'itching', 'scaling', 'burning sensation', 'thick silvery scales', 'joint pain', 'cracked skin'],
+                advice: 'Use moisturizers regularly. Apply prescribed topical treatments. Avoid triggers like stress and skin injuries. Consult a dermatologist.'
+            },
+            {
+                id: 'd54',
+                name: 'Eczema (Dermatitis)',
+                symptoms: ['itching', 'dry skin', 'rash', 'red patches', 'swelling', 'cracked skin', 'oozing', 'thickened skin'],
+                advice: 'Keep skin moisturized. Avoid harsh soaps and irritants. Use prescribed corticosteroid creams. Consult a dermatologist for persistent cases.'
+            },
+            {
+                id: 'd55',
+                name: 'Shingles (Herpes Zoster)',
+                symptoms: ['painful rash', 'blisters', 'burning sensation', 'itching', 'fever', 'headache', 'fatigue', 'sensitivity to touch', 'tingling'],
+                advice: 'See a doctor promptly for antiviral medication — most effective within 72 hours of rash onset. Keep rash clean and avoid scratching.'
+            },
+            {
+                id: 'd56',
+                name: 'Celiac Disease',
+                symptoms: ['diarrhea', 'bloating', 'abdominal pain', 'fatigue', 'weight loss', 'nausea', 'constipation', 'rash', 'anemia', 'joint pain'],
+                advice: 'Follow a strict gluten-free diet. Consult a gastroenterologist and a dietitian for proper management and nutritional guidance.'
+            },
+            {
+                id: 'd57',
+                name: 'Gallstones',
+                symptoms: ['abdominal pain', 'nausea', 'vomiting', 'back pain', 'bloating', 'indigestion', 'fever', 'jaundice', 'clay-colored stools'],
+                advice: 'Seek medical attention if you have sudden intense abdominal pain. Treatment may include medication to dissolve stones or surgery.'
+            },
+            {
+                id: 'd58',
+                name: 'Pancreatitis',
+                symptoms: ['severe abdominal pain', 'nausea', 'vomiting', 'fever', 'rapid heartbeat', 'abdominal tenderness', 'back pain', 'bloating', 'weight loss'],
+                advice: 'Seek immediate medical attention. Treatment typically involves hospitalization, fasting, IV fluids, and pain management.'
+            },
+            {
+                id: 'd59',
+                name: 'Hepatitis',
+                symptoms: ['fatigue', 'nausea', 'abdominal pain', 'loss of appetite', 'fever', 'dark urine', 'jaundice', 'joint pain', 'vomiting', 'clay-colored stools'],
+                advice: 'Consult a doctor immediately. Treatment varies by type (A, B, C). Rest, avoid alcohol, and follow prescribed antiviral therapy if applicable.'
+            },
+            {
+                id: 'd60',
+                name: 'Mono (Mononucleosis)',
+                symptoms: ['fatigue', 'sore throat', 'fever', 'swollen lymph nodes', 'headache', 'rash', 'muscle pain', 'swollen spleen', 'weakness'],
+                advice: 'Rest and drink plenty of fluids. Avoid contact sports (risk of spleen rupture). Symptoms typically resolve in 2-4 weeks.'
+            },
+            {
+                id: 'd61',
+                name: 'Lupus',
+                symptoms: ['fatigue', 'joint pain', 'rash', 'fever', 'sensitivity to light', 'chest pain', 'hair loss', 'mouth sores', 'swelling', 'shortness of breath'],
+                advice: 'Consult a rheumatologist for proper diagnosis and treatment plan. Protect skin from sun. Take prescribed immunosuppressants as directed.'
+            },
+            {
+                id: 'd62',
+                name: 'Fibromyalgia',
+                symptoms: ['widespread pain', 'fatigue', 'sleep problems', 'difficulty concentrating', 'headache', 'depression', 'numbness', 'tingling', 'joint stiffness'],
+                advice: 'Regular gentle exercise, stress management, and adequate sleep can help. Consult a doctor for pain management strategies and possible medication.'
+            },
+            {
+                id: 'd63',
+                name: 'Carpal Tunnel Syndrome',
+                symptoms: ['numbness', 'tingling', 'hand weakness', 'wrist pain', 'difficulty gripping', 'finger pain', 'burning sensation in hand'],
+                advice: 'Take frequent breaks from repetitive tasks. Wear a wrist splint. Do hand stretching exercises. Consult a doctor if symptoms persist.'
+            },
+            {
+                id: 'd64',
+                name: 'Peptic Ulcer',
+                symptoms: ['stomach pain', 'burning stomach pain', 'nausea', 'bloating', 'heartburn', 'vomiting', 'loss of appetite', 'weight loss', 'dark stools'],
+                advice: 'Avoid NSAIDs, alcohol, and spicy foods. Take prescribed proton pump inhibitors or antibiotics if H. pylori is the cause. Consult a gastroenterologist.'
+            },
+            {
+                id: 'd65',
+                name: 'Whooping Cough (Pertussis)',
+                symptoms: ['severe cough', 'cough', 'runny nose', 'mild fever', 'vomiting after coughing', 'fatigue', 'whooping sound when breathing', 'sneezing'],
+                advice: 'See a doctor for antibiotics. Keep the patient isolated. Vaccination (DTaP/Tdap) is the best prevention. Seek emergency care for infants.'
+            },
+            {
+                id: 'd66',
+                name: 'Mumps',
+                symptoms: ['swollen salivary glands', 'fever', 'headache', 'muscle pain', 'fatigue', 'loss of appetite', 'pain while chewing', 'jaw pain'],
+                advice: 'Rest, apply warm or cold compresses to swollen glands, eat soft foods, and stay hydrated. Vaccination (MMR) is the best prevention.'
+            },
+            {
+                id: 'd67',
+                name: 'Scarlet Fever',
+                symptoms: ['rash', 'sore throat', 'fever', 'red tongue', 'headache', 'body ache', 'nausea', 'vomiting', 'swollen lymph nodes', 'flushed face'],
+                advice: 'See a doctor for antibiotics (penicillin or amoxicillin). Rest, drink plenty of fluids, and treat fever with acetaminophen.'
+            },
+            {
+                id: 'd68',
+                name: 'Meningitis',
+                symptoms: ['severe headache', 'stiff neck', 'fever', 'nausea', 'vomiting', 'sensitivity to light', 'confusion', 'rash', 'seizures', 'fatigue'],
+                advice: 'This is a medical emergency. Seek immediate emergency care. Bacterial meningitis requires urgent antibiotic treatment.'
+            },
+            {
+                id: 'd69',
+                name: 'Lyme Disease',
+                symptoms: ['rash', 'fever', 'headache', 'fatigue', 'joint pain', 'muscle pain', 'stiff neck', 'swollen lymph nodes', 'chills', 'numbness'],
+                advice: 'See a doctor for antibiotic treatment. Early treatment is crucial to prevent complications. Use tick prevention measures outdoors.'
+            },
+            {
+                id: 'd70',
+                name: 'Chronic Bronchitis (COPD)',
+                symptoms: ['persistent cough', 'cough', 'mucus production', 'shortness of breath', 'wheezing', 'chest tightness', 'fatigue', 'frequent respiratory infections'],
+                advice: 'Stop smoking immediately. Use prescribed bronchodilators and inhalers. Pulmonary rehabilitation can help. Get annual flu and pneumonia vaccines.'
+            }
+        ];
+
+        // =============================================
+        // INITIALIZATION
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check admin authentication
+            setTimeout(() => {
+                const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+                
+                if (adminLoggedIn !== 'true') {
+                    // Not logged in, redirect to admin login
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                // Initialize database if needed
+                initializeDatabase();
+
+                // Load all data
+                refreshAllData();
+
+                // Hide loading screen
+                document.getElementById('loadingScreen').classList.add('hide');
+
+                console.log(
+                    '%c🛡️ Lifeline — Admin Dashboard',
+                    'color: #f59e0b; font-size: 14px; font-weight: bold;'
+                );
+                console.log(
+                    '%c📊 Database Status:',
+                    'color: #16a34a;'
+                );
+                console.log('   Diseases: ' + getDiseases().length);
+                console.log('   Symptoms: ' + getAllSymptoms().length);
+            }, 600);
+        });
+
+        // =============================================
+        // DATABASE INITIALIZATION
+        // =============================================
+        function initializeDatabase() {
+            const existingDiseases = localStorage.getItem('diseases');
+            
+            if (!existingDiseases || JSON.parse(existingDiseases).length === 0) {
+                // No database exists or empty, initialize with all 70 defaults
+                localStorage.setItem('diseases', JSON.stringify(DEFAULT_DISEASES));
+                console.log('%c📦 Initialized disease database with ' + DEFAULT_DISEASES.length + ' diseases', 'color: #16a34a;');
+            }
+
+            // Ensure users array exists
+            if (!localStorage.getItem('users')) {
+                localStorage.setItem('users', JSON.stringify([]));
+            }
+        }
+
+        // =============================================
+        // RESET DATABASE TO DEFAULT
+        // =============================================
+        document.getElementById('resetDatabaseBtn').addEventListener('click', function() {
+            const confirmed = confirm(
+                '⚠️ Reset Database?\n\n' +
+                'This will replace ALL current diseases with the default ' + DEFAULT_DISEASES.length + ' diseases.\n\n' +
+                'Any custom diseases you added will be DELETED.\n\n' +
+                'Are you sure you want to continue?'
+            );
+            
+            if (confirmed) {
+                localStorage.setItem('diseases', JSON.stringify(DEFAULT_DISEASES));
+                refreshAllData();
+                showAlert('addDiseaseSuccess', 'addDiseaseSuccessText', 
+                    '✅ Database reset successfully! Loaded ' + DEFAULT_DISEASES.length + ' default diseases.');
+                console.log('%c🔄 Database reset to default ' + DEFAULT_DISEASES.length + ' diseases', 'color: #16a34a;');
+            }
+        });
+
+        // =============================================
+        // GET DISEASES FROM LOCALSTORAGE
+        // =============================================
+        function getDiseases() {
+            try {
+                const diseases = JSON.parse(localStorage.getItem('diseases')) || [];
+                return diseases;
+            } catch (e) {
+                console.error('Error reading diseases:', e);
+                return [];
+            }
+        }
+
+        // =============================================
+        // SAVE DISEASES TO LOCALSTORAGE
+        // =============================================
+        function saveDiseases(diseases) {
+            localStorage.setItem('diseases', JSON.stringify(diseases));
+        }
+
+        // =============================================
+        // GET ALL UNIQUE SYMPTOMS
+        // =============================================
+        function getAllSymptoms() {
+            const diseases = getDiseases();
+            const symptomsSet = new Set();
+            
+            diseases.forEach(disease => {
+                if (disease.symptoms && Array.isArray(disease.symptoms)) {
+                    disease.symptoms.forEach(symptom => {
+                        symptomsSet.add(symptom.toLowerCase().trim());
+                    });
+                }
+            });
+            
+            return Array.from(symptomsSet);
+        }
+
+        // =============================================
+        // GET USERS COUNT
+        // =============================================
+        function getUsersCount() {
+            try {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                return users.length;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        // =============================================
+        // REFRESH ALL DATA
+        // =============================================
+        function refreshAllData() {
+            updateStats();
+            renderDiseaseList();
+            renderDiseaseSelect();
+            renderMonitoringList();
+        }
+
+        // =============================================
+        // UPDATE STATISTICS
+        // =============================================
+        function updateStats() {
+            const diseases = getDiseases();
+            const symptoms = getAllSymptoms();
+            const usersCount = getUsersCount();
+
+            document.getElementById('totalUsers').textContent = usersCount;
+            document.getElementById('totalDiseases').textContent = diseases.length;
+            document.getElementById('totalSymptoms').textContent = symptoms.length;
+        }
+
+        // =============================================
+        // RENDER DISEASE LIST
+        // =============================================
+        function renderDiseaseList(filter = '') {
+            let diseases = getDiseases();
+            const container = document.getElementById('diseaseList');
+
+            // Apply search filter
+            if (filter) {
+                const searchTerm = filter.toLowerCase();
+                diseases = diseases.filter(d => 
+                    d.name.toLowerCase().includes(searchTerm) ||
+                    d.symptoms.some(s => s.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            if (diseases.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h4>${filter ? 'No Matches Found' : 'No Diseases Found'}</h4>
+                        <p>${filter ? 'Try a different search term.' : 'Add your first disease using the form above.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = diseases.map(disease => `
+                <div class="disease-item" data-id="${disease.id}">
+                    <div class="disease-header">
+                        <div>
+                            <div class="disease-name">
+                                <span class="name-icon">🦠</span>
+                                ${escapeHtml(disease.name)}
+                            </div>
+                            <div class="disease-meta">${(disease.symptoms || []).length} symptoms</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteDisease('${disease.id}')">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                    <div class="disease-symptoms">
+                        ${(disease.symptoms || []).map(symptom => `
+                            <span class="symptom-tag">
+                                <span class="tag-dot"></span>
+                                ${escapeHtml(symptom)}
+                            </span>
+                        `).join('')}
+                    </div>
+                    <div class="disease-advice">
+                        <span class="advice-icon">💡</span>
+                        <div>
+                            <span class="disease-advice-label">Medical Advice</span>
+                            <span class="disease-advice-text">${escapeHtml(disease.advice || 'No advice provided.')}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // =============================================
+        // SEARCH DISEASE
+        // =============================================
+        document.getElementById('searchDisease').addEventListener('input', function() {
+            renderDiseaseList(this.value.trim());
+        });
+
+        // =============================================
+        // RENDER DISEASE SELECT DROPDOWN
+        // =============================================
+        function renderDiseaseSelect() {
+            const diseases = getDiseases();
+            const select = document.getElementById('selectDisease');
+
+            select.innerHTML = '<option value="">-- Choose a disease --</option>';
+            
+            // Sort alphabetically
+            const sortedDiseases = [...diseases].sort((a, b) => a.name.localeCompare(b.name));
+            
+            sortedDiseases.forEach(disease => {
+                const option = document.createElement('option');
+                option.value = disease.id;
+                option.textContent = `${disease.name} (${disease.symptoms.length} symptoms)`;
+                select.appendChild(option);
+            });
+        }
+
+        // =============================================
+        // RENDER MONITORING LIST
+        // =============================================
+        function renderMonitoringList() {
+            const diseases = getDiseases();
+            const container = document.getElementById('monitoringList');
+
+            if (diseases.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <p>No diseases in database.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by symptom count (descending)
+            const sortedDiseases = [...diseases].sort((a, b) => 
+                (b.symptoms || []).length - (a.symptoms || []).length
+            );
+
+            container.innerHTML = sortedDiseases.map(disease => `
+                <div class="monitoring-item">
+                    <div class="monitoring-name">
+                        <span class="m-icon">🦠</span>
+                        <span class="m-text">${escapeHtml(disease.name)}</span>
+                    </div>
+                    <span class="monitoring-count">
+                        ${(disease.symptoms || []).length}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        // =============================================
+        // ADD NEW DISEASE
+        // =============================================
+        document.getElementById('addDiseaseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('diseaseName');
+            const symptomsInput = document.getElementById('diseaseSymptoms');
+            const adviceInput = document.getElementById('diseaseAdvice');
+
+            const name = nameInput.value.trim();
+            const symptomsRaw = symptomsInput.value.trim();
+            const advice = adviceInput.value.trim();
+
+            // Validation
+            if (!name || !symptomsRaw || !advice) {
+                showAlert('addDiseaseError', 'addDiseaseErrorText', 'Please fill in all fields.');
+                return;
+            }
+
+            // Parse symptoms
+            const symptoms = symptomsRaw
+                .split(',')
+                .map(s => s.trim().toLowerCase())
+                .filter(s => s.length > 0);
+
+            if (symptoms.length === 0) {
+                showAlert('addDiseaseError', 'addDiseaseErrorText', 'Please enter at least one symptom.');
+                return;
+            }
+
+            // Check for duplicate disease name
+            const diseases = getDiseases();
+            const duplicate = diseases.find(d => d.name.toLowerCase() === name.toLowerCase());
+            
+            if (duplicate) {
+                showAlert('addDiseaseError', 'addDiseaseErrorText', `Disease "${name}" already exists in the database.`);
+                return;
+            }
+
+            // Create new disease object
+            const newDisease = {
+                id: 'd' + Date.now(),
+                name: name,
+                symptoms: symptoms,
+                advice: advice
+            };
+
+            // Add to database
+            diseases.push(newDisease);
+            saveDiseases(diseases);
+
+            // Clear form
+            nameInput.value = '';
+            symptomsInput.value = '';
+            adviceInput.value = '';
+
+            // Refresh data
+            refreshAllData();
+
+            // Show success message
+            showAlert('addDiseaseSuccess', 'addDiseaseSuccessText', `Disease "${name}" added successfully with ${symptoms.length} symptoms.`);
+
+            console.log('%c✅ Disease added:', 'color: #16a34a;', newDisease);
+        });
+
+        // =============================================
+        // ADD SYMPTOM TO EXISTING DISEASE
+        // =============================================
+        document.getElementById('addSymptomForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const selectDisease = document.getElementById('selectDisease');
+            const newSymptomInput = document.getElementById('newSymptom');
+
+            const diseaseId = selectDisease.value;
+            const symptomsRaw = newSymptomInput.value.trim();
+
+            // Validation
+            if (!diseaseId) {
+                showAlert('addSymptomError', 'addSymptomErrorText', 'Please select a disease.');
+                return;
+            }
+
+            if (!symptomsRaw) {
+                showAlert('addSymptomError', 'addSymptomErrorText', 'Please enter at least one symptom.');
+                return;
+            }
+
+            // Parse symptoms
+            const newSymptoms = symptomsRaw
+                .split(',')
+                .map(s => s.trim().toLowerCase())
+                .filter(s => s.length > 0);
+
+            if (newSymptoms.length === 0) {
+                showAlert('addSymptomError', 'addSymptomErrorText', 'Please enter valid symptoms.');
+                return;
+            }
+
+            // Find disease and add symptoms
+            const diseases = getDiseases();
+            const diseaseIndex = diseases.findIndex(d => d.id === diseaseId);
+
+            if (diseaseIndex === -1) {
+                showAlert('addSymptomError', 'addSymptomErrorText', 'Disease not found.');
+                return;
+            }
+
+            const disease = diseases[diseaseIndex];
+            
+            // Add only new symptoms (avoid duplicates)
+            let addedCount = 0;
+            let duplicateCount = 0;
+            newSymptoms.forEach(symptom => {
+                if (!disease.symptoms.includes(symptom)) {
+                    disease.symptoms.push(symptom);
+                    addedCount++;
+                } else {
+                    duplicateCount++;
+                }
+            });
+
+            if (addedCount === 0) {
+                showAlert('addSymptomError', 'addSymptomErrorText', 'All symptoms already exist for this disease.');
+                return;
+            }
+
+            // Save updated database
+            saveDiseases(diseases);
+
+            // Clear form
+            newSymptomInput.value = '';
+            selectDisease.value = '';
+
+            // Refresh data
+            refreshAllData();
+
+            // Show success message
+            let message = `Added ${addedCount} new symptom(s) to "${disease.name}".`;
+            if (duplicateCount > 0) {
+                message += ` (${duplicateCount} duplicate(s) skipped)`;
+            }
+            showAlert('addSymptomSuccess', 'addSymptomSuccessText', message);
+
+            console.log('%c✅ Symptoms added to:', 'color: #16a34a;', disease.name);
+        });
+
+        // =============================================
+        // DELETE DISEASE
+        // =============================================
+        function deleteDisease(diseaseId) {
+            const diseases = getDiseases();
+            const diseaseIndex = diseases.findIndex(d => d.id === diseaseId);
+
+            if (diseaseIndex === -1) {
+                alert('Disease not found.');
+                return;
+            }
+
+            const diseaseName = diseases[diseaseIndex].name;
+
+            // Confirm deletion
+            const confirmed = confirm(`⚠️ Delete Disease?\n\nAre you sure you want to delete "${diseaseName}"?\n\nThis action cannot be undone.`);
+            
+            if (!confirmed) {
+                return;
+            }
+
+            // Remove disease
+            diseases.splice(diseaseIndex, 1);
+            saveDiseases(diseases);
+
+            // Refresh data
+            refreshAllData();
+
+            // Show success message
+            showAlert('deleteDiseaseSuccess', 'deleteDiseaseSuccessText', `Disease "${diseaseName}" has been deleted.`);
+
+            console.log('%c🗑️ Disease deleted:', 'color: #ef4444;', diseaseName);
+        }
+
+        // =============================================
+        // SHOW ALERT MESSAGE
+        // =============================================
+        function showAlert(alertId, textId, message) {
+            // Hide all alerts first
+            document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+
+            const alert = document.getElementById(alertId);
+            const textEl = document.getElementById(textId);
+
+            if (!alert || !textEl) return;
+
+            textEl.textContent = message;
+            alert.classList.add('show');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // =============================================
+        // ESCAPE HTML
+        // =============================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // =============================================
+        // LOGOUT
+        // =============================================
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            const confirmed = confirm('Are you sure you want to logout?');
+            
+            if (confirmed) {
+                // Clear admin session
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminEmail');
+                localStorage.removeItem('adminLoginTime');
+
+                // Redirect to admin login
+                window.location.href = 'admin-login.html';
+
+                console.log('%c🚪 Admin logged out', 'color: #f59e0b;');
+            }
+        });
+    </script>
+</body>
+</html>

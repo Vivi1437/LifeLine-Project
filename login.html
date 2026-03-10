@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Lifeline: Smart Health Assistance</title>
+    <style>
+        /* =============================================
+           CSS CUSTOM PROPERTIES & RESET
+           ============================================= */
+        :root {
+            --primary: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-deeper: #0D47A1;
+            --primary-light: #64B5F6;
+            --primary-ultra-light: #E3F2FD;
+            --secondary: #64B5F6;
+            --accent: #0D47A1;
+            --accent-light: #90CAF9;
+            --gradient-1: linear-gradient(135deg, #0D47A1 0%, #1976D2 50%, #64B5F6 100%);
+            --gradient-2: linear-gradient(135deg, #0D47A1 0%, #1976D2 100%);
+            --gradient-page: linear-gradient(160deg, #0a1628 0%, #0D47A1 25%, #1565C0 50%, #1976D2 75%, #1E88E5 100%);
+            --text-dark: #1E293B;
+            --text-medium: #475569;
+            --text-light: #94a3b8;
+            --bg-white: #ffffff;
+            --bg-light: #F8FAFC;
+            --border-light: #e2e8f0;
+            --border-blue: #BBDEFB;
+            --error: #ef4444;
+            --error-light: #fef2f2;
+            --error-border: #fecaca;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --success-border: #bbf7d0;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --warning-border: #fde68a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(25,118,210,0.06), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 25px rgba(25,118,210,0.1), 0 4px 10px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 50px rgba(25,118,210,0.14), 0 8px 20px rgba(0,0,0,0.06);
+            --shadow-card: 0 8px 40px rgba(13,71,161,0.12), 0 2px 10px rgba(0,0,0,0.04);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-main: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--gradient-page);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =============================================
+           BACKGROUND DECORATIONS
+           ============================================= */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb-1 {
+            top: -12%;
+            left: -8%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(100,181,246,0.09) 0%, transparent 70%);
+            animation: orbFloat 10s ease-in-out infinite;
+        }
+
+        .bg-orb-2 {
+            bottom: -18%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(25,118,210,0.07) 0%, transparent 70%);
+            animation: orbFloat 12s ease-in-out infinite reverse;
+        }
+
+        .bg-orb-3 {
+            top: 50%;
+            right: 20%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(13,71,161,0.05) 0%, transparent 70%);
+            animation: orbFloat 9s ease-in-out infinite 3s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.04); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.94); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shimmerLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        @keyframes shakeX {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-7px); }
+            40% { transform: translateX(7px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        @keyframes successPulse {
+            0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.3); }
+            70% { box-shadow: 0 0 0 14px rgba(22,163,74,0); }
+            100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+        }
+
+        @keyframes spinnerRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes lockUnlock {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            50% { transform: rotate(10deg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* =============================================
+           TOP NAVIGATION BAR
+           ============================================= */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .top-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .top-brand:hover {
+            opacity: 0.85;
+        }
+
+        .top-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-brand-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: shimmerLine 3s ease-in-out infinite;
+        }
+
+        .top-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+
+        .top-brand-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .top-brand-subtitle {
+            font-size: 0.58rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.6;
+        }
+
+        .top-right-link {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top-right-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-color: rgba(255,255,255,0.35);
+        }
+
+        /* =============================================
+           MAIN CONTENT AREA
+           ============================================= */
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 24px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 460px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* =============================================
+           LOGIN CARD
+           ============================================= */
+        .login-card {
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 48px 40px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(187,222,251,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-1);
+        }
+
+        /* Card Header */
+        .card-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .card-icon {
+            width: 68px;
+            height: 68px;
+            background: var(--primary-ultra-light);
+            border: 2px solid var(--border-blue);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 18px;
+            transition: var(--transition);
+        }
+
+        .card-header:hover .card-icon {
+            transform: scale(1.06) rotate(-3deg);
+            border-color: var(--primary-light);
+            box-shadow: 0 6px 20px rgba(25,118,210,0.12);
+        }
+
+        .card-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .card-subtitle {
+            font-size: 0.92rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        /* =============================================
+           ALERT BOX
+           ============================================= */
+        .alert-box {
+            display: none;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-size: 0.87rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        .alert-box.show {
+            display: flex;
+            animation: scaleIn 0.35s ease-out;
+        }
+
+        .alert-box.alert-error {
+            background: var(--error-light);
+            border: 1px solid var(--error-border);
+            color: #b91c1c;
+        }
+
+        .alert-box.alert-success {
+            background: var(--success-light);
+            border: 1px solid var(--success-border);
+            color: #15803d;
+        }
+
+        .alert-box.alert-warning {
+            background: var(--warning-light);
+            border: 1px solid var(--warning-border);
+            color: #92400e;
+        }
+
+        .alert-icon {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-content strong {
+            display: block;
+            font-size: 0.88rem;
+            margin-bottom: 2px;
+        }
+
+        .alert-content span {
+            font-weight: 400;
+            font-size: 0.82rem;
+            opacity: 0.85;
+        }
+
+        /* =============================================
+           FORM STYLES
+           ============================================= */
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-label .label-icon {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .form-label .required-star {
+            color: var(--error);
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            padding-left: 46px;
+            font-size: 0.95rem;
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: var(--bg-white);
+            box-shadow: 0 0 0 4px rgba(25,118,210,0.08);
+        }
+
+        .form-input.input-error {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .form-input.input-error:focus {
+            box-shadow: 0 0 0 4px rgba(239,68,68,0.08);
+        }
+
+        .form-input.input-valid {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .form-input.input-valid:focus {
+            box-shadow: 0 0 0 4px rgba(22,163,74,0.08);
+        }
+
+        .input-icon-left {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            opacity: 0.45;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .form-input:focus ~ .input-icon-left {
+            opacity: 0.75;
+        }
+
+        .input-status {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .input-status.visible {
+            opacity: 1;
+        }
+
+        /* Password Toggle */
+        .password-toggle-btn {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            opacity: 0.45;
+            padding: 4px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .password-toggle-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* Field Error Message */
+        .field-error {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--error);
+            margin-top: 7px;
+            padding: 0 2px;
+            font-weight: 500;
+        }
+
+        .field-error.show {
+            display: flex;
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        .field-error .fe-icon {
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           LOGIN BUTTON
+           ============================================= */
+        .btn-login {
+            width: 100%;
+            padding: 15px 28px;
+            font-size: 1.02rem;
+            font-weight: 700;
+            font-family: var(--font-main);
+            color: white;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(25,118,210,0.3);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50%;
+            transition: width 0.5s, height 0.5s;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(25,118,210,0.4);
+        }
+
+        .btn-login:active::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(25,118,210,0.2) !important;
+        }
+
+        .btn-login .btn-text { z-index: 1; }
+        .btn-login .btn-icon { z-index: 1; font-size: 1.15rem; }
+
+        /* Loading State */
+        .btn-spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spinnerRotate 0.7s linear infinite;
+            z-index: 1;
+        }
+
+        .btn-login.loading .btn-text,
+        .btn-login.loading .btn-icon {
+            display: none;
+        }
+
+        .btn-login.loading .btn-spinner {
+            display: block;
+        }
+
+        /* =============================================
+           DIVIDER
+           ============================================= */
+        .form-divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 28px 0;
+        }
+
+        .form-divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border-light);
+        }
+
+        .form-divider-text {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* =============================================
+           BOTTOM LINKS
+           ============================================= */
+        .bottom-links {
+            text-align: center;
+            margin-top: 28px;
+        }
+
+        .bottom-links .register-link {
+            font-size: 0.92rem;
+            color: var(--text-medium);
+        }
+
+        .bottom-links .register-link a {
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .bottom-links .register-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 1px;
+            transition: var(--transition);
+        }
+
+        .bottom-links .register-link a:hover {
+            color: var(--accent);
+        }
+
+        .bottom-links .register-link a:hover::after {
+            width: 100%;
+        }
+
+        .bottom-links .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .bottom-links .home-link:hover {
+            color: var(--primary);
+        }
+
+        /* =============================================
+           MINI DISCLAIMER
+           ============================================= */
+        .mini-disclaimer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.74rem;
+            color: var(--text-light);
+            line-height: 1.65;
+        }
+
+        /* =============================================
+           SUCCESS OVERLAY
+           ============================================= */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,22,40,0.75);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .success-modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #16a34a, #22c55e, #4ade80);
+        }
+
+        .success-icon-wrap {
+            width: 76px;
+            height: 76px;
+            background: var(--success-light);
+            border: 3px solid var(--success-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 22px;
+            font-size: 2.2rem;
+            animation: successPulse 1.5s ease-in-out infinite;
+        }
+
+        .success-modal h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .success-modal .welcome-name {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .success-modal p {
+            font-size: 0.92rem;
+            color: var(--text-medium);
+            line-height: 1.65;
+            margin-bottom: 28px;
+        }
+
+        .success-modal .loading-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 18px;
+        }
+
+        .success-modal .loading-dots .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+
+        .success-modal .loading-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+        .success-modal .loading-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .redirect-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .redirect-info .countdown-num {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 14px;
+            display: inline-block;
+        }
+
+        .btn-go-dashboard {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 13px 36px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: var(--font-main);
+            color: white;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(25,118,210,0.3);
+        }
+
+        .btn-go-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(25,118,210,0.4);
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .page-footer {
+            text-align: center;
+            padding: 20px 24px 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-footer p {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.25);
+        }
+
+        /* =============================================
+           USER COUNT BADGE (SUBTLE INFO)
+           ============================================= */
+        .user-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-count-badge .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: dotBounce 2s ease-in-out infinite;
+        }
+
+        /* =============================================
+           RESPONSIVE
+           ============================================= */
+        @media (max-width: 540px) {
+            .page-wrapper {
+                padding: 90px 16px 40px;
+            }
+
+            .login-card {
+                padding: 40px 24px;
+                border-radius: var(--radius-lg);
+            }
+
+            .card-title {
+                font-size: 1.4rem;
+            }
+
+            .top-brand-subtitle {
+                display: none;
+            }
+
+            .success-modal {
+                padding: 36px 24px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .login-card {
+                padding: 32px 18px;
+            }
+
+            .form-input {
+                padding: 12px 14px 12px 42px;
+                font-size: 0.9rem;
+            }
+
+            .top-right-link span {
+                display: none;
+            }
+
+            .card-icon {
+                width: 58px;
+                height: 58px;
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Decorations -->
+    <div class="bg-pattern"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- ============================================= -->
+    <!-- TOP NAVIGATION BAR                            -->
+    <!-- ============================================= -->
+    <header class="top-bar">
+        <a href="index.html" class="top-brand">
+            <div class="top-brand-icon">🩺</div>
+            <div class="top-brand-text">
+                <span class="top-brand-title">Lifeline</span>
+                <span class="top-brand-subtitle">Smart Health Assistance</span>
+            </div>
+        </a>
+        <a href="register.html" class="top-right-link">
+            📝 <span>Register</span>
+        </a>
+    </header>
+
+    <!-- ============================================= -->
+    <!-- MAIN CONTENT                                  -->
+    <!-- ============================================= -->
+    <main class="page-wrapper">
+        <div class="login-container">
+
+            <!-- User Count Badge -->
+            <div style="text-align:center;">
+                <div class="user-count-badge" id="userCountBadge">
+                    <span class="badge-dot"></span>
+                    <span id="userCountText">System active</span>
+                </div>
+            </div>
+
+            <div class="login-card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="card-icon" id="cardIconMain">🔐</div>
+                    <h1 class="card-title">Welcome Back</h1>
+                    <p class="card-subtitle">Sign in to access the Lifeline symptom checker dashboard.</p>
+                </div>
+
+                <!-- Alert Box -->
+                <div class="alert-box" id="alertBox">
+                    <span class="alert-icon" id="alertIcon"></span>
+                    <div class="alert-content">
+                        <strong id="alertTitle"></strong>
+                        <span id="alertMessage"></span>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" novalidate autocomplete="off">
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">
+                            <span class="label-icon">✉️</span>
+                            Email Address
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="email"
+                                id="loginEmail"
+                                class="form-input"
+                                placeholder="Enter your registered email"
+                                required
+                                autocomplete="email"
+                            >
+                            <span class="input-icon-left">📧</span>
+                            <span class="input-status" id="emailStatus"></span>
+                        </div>
+                        <div class="field-error" id="emailError">
+                            <span class="fe-icon">⚠️</span>
+                            <span class="fe-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">
+                            <span class="label-icon">🔒</span>
+                            Password
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                class="form-input"
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <span class="input-icon-left">🔑</span>
+                            <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="field-error" id="passwordError">
+                            <span class="fe-icon">⚠️</span>
+                            <span class="fe-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span class="btn-icon">🔓</span>
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="form-divider">
+                    <span class="form-divider-line"></span>
+                    <span class="form-divider-text">or</span>
+                    <span class="form-divider-line"></span>
+                </div>
+
+                <!-- Bottom Links -->
+                <div class="bottom-links">
+                    <div class="register-link">
+                        Don't have an account? <a href="register.html">Register here</a>
+                    </div>
+                    <a href="index.html" class="home-link">
+                        ← Back to Home
+                    </a>
+                </div>
+
+                <!-- Mini Disclaimer -->
+                <div class="mini-disclaimer">
+                    🛡️ This is a prototype system for educational purposes only.
+                    <br>Your data is stored locally in your browser.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================= -->
+    <!-- SUCCESS OVERLAY                               -->
+    <!-- ============================================= -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-modal">
+            <div class="success-icon-wrap">🎉</div>
+            <h2>Login Successful!</h2>
+            <div class="welcome-name" id="welcomeName"></div>
+            <p>You are being redirected to your health dashboard where you can start checking your symptoms.</p>
+            <button class="btn-go-dashboard" onclick="window.location.href='dashboard.html'">
+                📊 Go to Dashboard
+            </button>
+            <div class="loading-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="redirect-info">
+                Redirecting in <span class="countdown-num" id="countdown">3</span> seconds...
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- PAGE FOOTER                                   -->
+    <!-- ============================================= -->
+    <footer class="page-footer">
+        <p>© 2026 Lifeline: Smart Health Assistance Web Application</p>
+    </footer>
+
+    <!-- ============================================= -->
+    <!-- JAVASCRIPT                                    -->
+    <!-- ============================================= -->
+    <script>
+        // =============================================
+        // DOM ELEMENTS
+        // =============================================
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('loginEmail');
+        const passwordInput = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const alertBox = document.getElementById('alertBox');
+        const alertIcon = document.getElementById('alertIcon');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertMessage = document.getElementById('alertMessage');
+        const successOverlay = document.getElementById('successOverlay');
+        const countdownEl = document.getElementById('countdown');
+        const welcomeNameEl = document.getElementById('welcomeName');
+        const cardIconMain = document.getElementById('cardIconMain');
+
+        // =============================================
+        // INIT: SHOW REGISTERED USER COUNT
+        // =============================================
+        (function initPage() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const countText = document.getElementById('userCountText');
+
+            if (users.length === 0) {
+                countText.textContent = 'No registered users yet — Register first';
+            } else if (users.length === 1) {
+                countText.textContent = '1 registered user';
+            } else {
+                countText.textContent = users.length + ' registered users';
+            }
+
+            // Check if already logged in
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                showAlert('warning', 'Active Session', 'You are already logged in as ' + user.name + '. Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            }
+        })();
+
+        // =============================================
+        // UTILITY: SHOW ALERT
+        // =============================================
+        function showAlert(type, title, message) {
+            alertBox.className = 'alert-box show alert-' + type;
+            const icons = { error: '🚫', success: '✅', warning: '⚠️' };
+            alertIcon.textContent = icons[type] || '💬';
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+
+            if (type !== 'warning') {
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 7000);
+            }
+        }
+
+        function hideAlert() {
+            alertBox.classList.remove('show');
+        }
+
+        // =============================================
+        // UTILITY: FIELD ERROR MANAGEMENT
+        // =============================================
+        function showFieldError(inputEl, errorElId, statusElId, message) {
+            inputEl.classList.remove('input-valid');
+            inputEl.classList.add('input-error');
+            const errorEl = document.getElementById(errorElId);
+            errorEl.querySelector('.fe-text').textContent = message;
+            errorEl.classList.add('show');
+            if (statusElId) {
+                const statusEl = document.getElementById(statusElId);
+                statusEl.textContent = '❌';
+                statusEl.classList.add('visible');
+            }
+        }
+
+        function clearFieldError(inputEl, errorElId, statusElId) {
+            inputEl.classList.remove('input-error');
+            const errorEl = document.getElementById(errorElId);
+            errorEl.classList.remove('show');
+            if (statusElId) {
+                const statusEl = document.getElementById(statusElId);
+                statusEl.classList.remove('visible');
+            }
+        }
+
+        function showFieldValid(inputEl, statusElId) {
+            inputEl.classList.remove('input-error');
+            inputEl.classList.add('input-valid');
+            if (statusElId) {
+                const statusEl = document.getElementById(statusElId);
+                statusEl.textContent = '✅';
+                statusEl.classList.add('visible');
+            }
+        }
+
+        // =============================================
+        // EMAIL VALIDATION
+        // =============================================
+        function isValidEmail(email) {
+            return /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(email);
+        }
+
+        // =============================================
+        // REAL-TIME VALIDATION ON BLUR
+        // =============================================
+        emailInput.addEventListener('blur', function () {
+            const val = this.value.trim();
+            if (val === '') {
+                showFieldError(this, 'emailError', 'emailStatus', 'Email address is required.');
+            } else if (!isValidEmail(val)) {
+                showFieldError(this, 'emailError', 'emailStatus', 'Please enter a valid email format.');
+            } else {
+                clearFieldError(this, 'emailError', 'emailStatus');
+                showFieldValid(this, 'emailStatus');
+            }
+        });
+
+        passwordInput.addEventListener('blur', function () {
+            const val = this.value;
+            if (val === '') {
+                showFieldError(this, 'passwordError', null, 'Password is required.');
+            } else {
+                clearFieldError(this, 'passwordError', null);
+            }
+        });
+
+        // Clear errors on focus
+        emailInput.addEventListener('focus', function () {
+            this.classList.remove('input-error', 'input-valid');
+            hideAlert();
+        });
+
+        passwordInput.addEventListener('focus', function () {
+            this.classList.remove('input-error', 'input-valid');
+            hideAlert();
+        });
+
+        // =============================================
+        // PASSWORD VISIBILITY TOGGLE
+        // =============================================
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+        // =============================================
+        // FORM SUBMISSION — LOGIN LOGIC
+        // =============================================
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Gather values
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Reset errors
+            clearFieldError(emailInput, 'emailError', 'emailStatus');
+            clearFieldError(passwordInput, 'passwordError', null);
+            hideAlert();
+
+            let hasErrors = false;
+
+            // ---- VALIDATE EMAIL ----
+            if (email === '') {
+                showFieldError(emailInput, 'emailError', 'emailStatus', 'Email address is required.');
+                hasErrors = true;
+            } else if (!isValidEmail(email)) {
+                showFieldError(emailInput, 'emailError', 'emailStatus', 'Please enter a valid email format.');
+                hasErrors = true;
+            }
+
+            // ---- VALIDATE PASSWORD ----
+            if (password === '') {
+                showFieldError(passwordInput, 'passwordError', null, 'Password is required.');
+                hasErrors = true;
+            }
+
+            // If validation errors, shake and stop
+            if (hasErrors) {
+                form.style.animation = 'shakeX 0.5s ease';
+                setTimeout(() => { form.style.animation = ''; }, 500);
+                return;
+            }
+
+            // ---- SHOW LOADING STATE ----
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            // Simulate a short delay for realism
+            setTimeout(() => {
+                // ---- RETRIEVE USERS FROM localStorage ----
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+
+                // ---- FIND USER BY EMAIL ----
+                const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+                if (!foundUser) {
+                    // User not found
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+
+                    showFieldError(emailInput, 'emailError', 'emailStatus', 'No account found with this email.');
+                    showAlert('error', 'User Not Found', 'Please register first or check the email address you entered.');
+
+                    // Animate lock icon
+                    cardIconMain.style.animation = 'lockUnlock 0.6s ease';
+                    setTimeout(() => { cardIconMain.style.animation = ''; }, 600);
+
+                    return;
+                }
+
+                // ---- CHECK PASSWORD ----
+                if (foundUser.password !== password) {
+                    // Wrong password
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+
+                    showFieldError(passwordInput, 'passwordError', null, 'Incorrect password. Please try again.');
+                    showAlert('error', 'Incorrect Password', 'The password you entered does not match our records.');
+
+                    passwordInput.value = '';
+                    passwordInput.focus();
+
+                    // Animate lock icon
+                    cardIconMain.style.animation = 'lockUnlock 0.6s ease';
+                    setTimeout(() => { cardIconMain.style.animation = ''; }, 600);
+
+                    return;
+                }
+
+                // ---- LOGIN SUCCESSFUL ----
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+
+                // Save current user session in localStorage
+                const sessionData = {
+                    id: foundUser.id,
+                    name: foundUser.name,
+                    email: foundUser.email,
+                    loggedInAt: new Date().toISOString()
+                };
+                localStorage.setItem('currentUser', JSON.stringify(sessionData));
+
+                // Show success overlay
+                welcomeNameEl.textContent = 'Welcome, ' + foundUser.name + '!';
+                successOverlay.classList.add('show');
+
+                // Start countdown
+                let count = 3;
+                countdownEl.textContent = count;
+
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    countdownEl.textContent = count;
+                    if (count <= 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = 'dashboard.html';
+                    }
+                }, 1000);
+
+                console.log(
+                    '%c✅ User logged in: ' + foundUser.email,
+                    'color: #16a34a; font-weight: bold;'
+                );
+
+            }, 1000);
+        });
+
+        // =============================================
+        // KEYBOARD: ENTER KEY SUBMITS FORM
+        // =============================================
+        passwordInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // =============================================
+        // CONSOLE INFO
+        // =============================================
+        console.log(
+            '%c🩺 Lifeline — Login Page',
+            'color: #1976D2; font-size: 14px; font-weight: bold;'
+        );
+
+        const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+        console.log(
+            '%cRegistered users available for login: ' + storedUsers.length,
+            'color: #64B5F6; font-size: 12px;'
+        );
+
+        if (storedUsers.length > 0) {
+            console.log('%cRegistered emails:', 'color: #94a3b8; font-size: 11px;');
+            storedUsers.forEach(u => {
+                console.log('   → ' + u.email);
+            });
+        }
+    </script>
+</body>
+</html>

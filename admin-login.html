@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — Lifeline: Smart Health Assistance</title>
+    <style>
+        /* =============================================
+           CSS CUSTOM PROPERTIES & RESET
+           ============================================= */
+        :root {
+            /* Primary Colors */
+            --primary: #1976D2;
+            --primary-dark: #1565C0;
+            --primary-deeper: #0D47A1;
+            --primary-light: #64B5F6;
+            --primary-ultra-light: #E3F2FD;
+            
+            /* Text Colors */
+            --text-dark: #1E293B;
+            --text-medium: #475569;
+            --text-light: #94a3b8;
+            
+            /* Background Colors */
+            --bg-white: #ffffff;
+            --bg-light: #F8FAFC;
+            
+            /* Border Colors */
+            --border-light: #e2e8f0;
+            --border-blue: #BBDEFB;
+            
+            /* Status Colors */
+            --error: #ef4444;
+            --error-light: #fef2f2;
+            --error-border: #fecaca;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --success-border: #bbf7d0;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(25,118,210,0.06), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 25px rgba(25,118,210,0.1), 0 4px 10px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.1);
+            --shadow-card: 0 25px 60px rgba(0,0,0,0.2), 0 10px 25px rgba(0,0,0,0.1);
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Typography */
+            --font-main: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =============================================
+           BACKGROUND DECORATIONS
+           ============================================= */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb-1 {
+            top: -15%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: orbFloat 12s ease-in-out infinite;
+        }
+
+        .bg-orb-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(13,71,161,0.3) 0%, transparent 70%);
+            animation: orbFloat 15s ease-in-out infinite reverse;
+        }
+
+        .bg-orb-3 {
+            top: 50%;
+            right: 20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(100,181,246,0.1) 0%, transparent 70%);
+            animation: orbFloat 10s ease-in-out infinite 2s;
+        }
+
+        .bg-orb-4 {
+            top: 20%;
+            left: 15%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+            animation: orbFloat 8s ease-in-out infinite 1s;
+        }
+
+        /* =============================================
+           ANIMATIONS
+           ============================================= */
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shimmerLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        @keyframes shakeX {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(6px); }
+        }
+
+        @keyframes spinnerRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes successPulse {
+            0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(22,163,74,0); }
+            100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* =============================================
+           TOP NAVIGATION BAR
+           ============================================= */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .top-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .top-brand:hover {
+            opacity: 0.9;
+            transform: translateX(-2px);
+        }
+
+        .top-brand-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .top-brand-icon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmerLine 3s ease-in-out infinite;
+        }
+
+        .top-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .top-brand-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .top-brand-subtitle {
+            font-size: 0.6rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .top-home-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 10px 22px;
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(255,255,255,0.25);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .top-home-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+
+        /* =============================================
+           MAIN CONTENT AREA
+           ============================================= */
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 24px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 460px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* =============================================
+           ADMIN BADGE
+           ============================================= */
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out 0.2s both;
+        }
+
+        .admin-badge-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .admin-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+
+        /* =============================================
+           LOGIN CARD
+           ============================================= */
+        .login-card {
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
+            padding: 48px 44px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+        }
+
+        /* Card Header */
+        .card-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(245,158,11,0.3);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .card-icon::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: var(--radius-lg);
+            border: 2px dashed rgba(245,158,11,0.3);
+            animation: spinnerRotate 20s linear infinite;
+        }
+
+        .card-header:hover .card-icon {
+            transform: scale(1.05) rotate(-3deg);
+            box-shadow: 0 15px 40px rgba(245,158,11,0.4);
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .card-subtitle {
+            font-size: 0.92rem;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        /* =============================================
+           ALERT BOX
+           ============================================= */
+        .alert-box {
+            display: none;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .alert-box.show {
+            display: flex;
+            animation: scaleIn 0.35s ease-out;
+        }
+
+        .alert-box.alert-error {
+            background: var(--error-light);
+            border: 1px solid var(--error-border);
+            color: #b91c1c;
+        }
+
+        .alert-box.alert-success {
+            background: var(--success-light);
+            border: 1px solid var(--success-border);
+            color: #15803d;
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            flex: 1;
+        }
+
+        /* =============================================
+           FORM STYLES
+           ============================================= */
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .form-label .label-icon {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .form-label .required-star {
+            color: var(--error);
+            font-weight: 700;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 18px;
+            padding-left: 50px;
+            font-size: 0.95rem;
+            font-family: var(--font-main);
+            color: var(--text-dark);
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .form-input:focus {
+            border-color: #f59e0b;
+            background: var(--bg-white);
+            box-shadow: 0 0 0 4px rgba(245,158,11,0.1);
+        }
+
+        .form-input.input-error {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .form-input.input-error:focus {
+            box-shadow: 0 0 0 4px rgba(239,68,68,0.1);
+        }
+
+        .input-icon-left {
+            position: absolute;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            font-size: 1.15rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .form-input:focus ~ .input-icon-left {
+            color: #f59e0b;
+        }
+
+        /* Password Toggle */
+        .password-toggle-btn {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.15rem;
+            color: var(--text-light);
+            padding: 4px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--text-medium);
+        }
+
+        /* Field Error Message */
+        .field-error {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--error);
+            margin-top: 8px;
+            padding: 0 2px;
+            font-weight: 500;
+        }
+
+        .field-error.show {
+            display: flex;
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        .field-error .fe-icon {
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           LOGIN BUTTON
+           ============================================= */
+        .btn-login {
+            width: 100%;
+            padding: 16px 28px;
+            font-size: 1.02rem;
+            font-weight: 700;
+            font-family: var(--font-main);
+            color: white;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(245,158,11,0.35);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            transition: width 0.5s, height 0.5s;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(245,158,11,0.45);
+        }
+
+        .btn-login:active::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 20px rgba(245,158,11,0.2) !important;
+        }
+
+        .btn-login .btn-text { z-index: 1; }
+        .btn-login .btn-icon { z-index: 1; font-size: 1.15rem; }
+
+        /* Loading State */
+        .btn-spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spinnerRotate 0.7s linear infinite;
+            z-index: 1;
+        }
+
+        .btn-login.loading .btn-text,
+        .btn-login.loading .btn-icon {
+            display: none;
+        }
+
+        .btn-login.loading .btn-spinner {
+            display: block;
+        }
+
+        /* =============================================
+           BOTTOM LINKS
+           ============================================= */
+        .bottom-links {
+            text-align: center;
+            margin-top: 28px;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .home-link:hover {
+            color: var(--primary);
+            background: var(--primary-ultra-light);
+            border-color: var(--border-blue);
+        }
+
+        .home-link .link-icon {
+            font-size: 1rem;
+        }
+
+        /* =============================================
+           SECURITY NOTE
+           ============================================= */
+        .security-note {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .security-note-inner {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .security-note-inner .note-icon {
+            font-size: 0.9rem;
+            color: #f59e0b;
+        }
+
+        /* =============================================
+           SUCCESS OVERLAY
+           ============================================= */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(13,71,161,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .success-overlay.show {
+            display: flex;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        .success-modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 48px 44px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #16a34a, #22c55e, #4ade80);
+        }
+
+        .success-icon-wrap {
+            width: 85px;
+            height: 85px;
+            background: var(--success-light);
+            border: 4px solid var(--success-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2.5rem;
+            animation: successPulse 1.5s ease-in-out infinite;
+        }
+
+        .success-modal h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .success-modal p {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .redirect-info {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .redirect-info .countdown-num {
+            font-weight: 700;
+            color: #f59e0b;
+            min-width: 14px;
+            display: inline-block;
+        }
+
+        .btn-go-dashboard {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 38px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            font-family: var(--font-main);
+            color: white;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(245,158,11,0.35);
+        }
+
+        .btn-go-dashboard:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(245,158,11,0.45);
+        }
+
+        /* =============================================
+           FOOTER
+           ============================================= */
+        .page-footer {
+            text-align: center;
+            padding: 20px 24px 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-footer p {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* =============================================
+           RESPONSIVE
+           ============================================= */
+        @media (max-width: 540px) {
+            .page-wrapper {
+                padding: 90px 16px 40px;
+            }
+
+            .login-card {
+                padding: 40px 28px;
+                border-radius: var(--radius-lg);
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+
+            .card-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.9rem;
+            }
+
+            .top-brand-subtitle {
+                display: none;
+            }
+
+            .success-modal {
+                padding: 40px 28px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .login-card {
+                padding: 32px 20px;
+            }
+
+            .form-input {
+                padding: 13px 16px 13px 46px;
+                font-size: 0.9rem;
+            }
+
+            .top-home-link span {
+                display: none;
+            }
+
+            .top-home-link {
+                padding: 10px 14px;
+            }
+
+            .card-icon {
+                width: 64px;
+                height: 64px;
+                font-size: 1.7rem;
+            }
+
+            .card-title {
+                font-size: 1.35rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Decorations -->
+    <div class="bg-pattern"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+
+    <!-- ============================================= -->
+    <!-- TOP NAVIGATION BAR                            -->
+    <!-- ============================================= -->
+    <header class="top-bar">
+        <a href="index.html" class="top-brand">
+            <div class="top-brand-icon">🩺</div>
+            <div class="top-brand-text">
+                <span class="top-brand-title">Lifeline</span>
+                <span class="top-brand-subtitle">Smart Health Assistance</span>
+            </div>
+        </a>
+        <a href="index.html" class="top-home-link">
+            🏠 <span>Back to Home</span>
+        </a>
+    </header>
+
+    <!-- ============================================= -->
+    <!-- MAIN CONTENT                                  -->
+    <!-- ============================================= -->
+    <main class="page-wrapper">
+        <div class="login-container">
+            
+            <!-- Admin Badge -->
+            <div class="admin-badge">
+                <div class="admin-badge-inner">
+                    <span class="admin-badge-dot"></span>
+                    Admin Access Only
+                </div>
+            </div>
+
+            <div class="login-card">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <h1 class="card-title">Admin Login</h1>
+                    <p class="card-subtitle">Enter your administrator credentials to access the dashboard.</p>
+                </div>
+
+                <!-- Alert Box -->
+                <div class="alert-box" id="alertBox">
+                    <span class="alert-icon" id="alertIcon"></span>
+                    <span class="alert-text" id="alertText"></span>
+                </div>
+
+                <!-- Login Form -->
+                <form id="adminLoginForm" novalidate autocomplete="off">
+                    <!-- Email Field -->
+                    <div class="form-group">
+                        <label class="form-label" for="adminEmail">
+                            <span class="label-icon">✉️</span>
+                            Admin Email
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="email"
+                                id="adminEmail"
+                                class="form-input"
+                                placeholder="Enter admin email address"
+                                required
+                                autocomplete="email"
+                            >
+                            <span class="input-icon-left">📧</span>
+                        </div>
+                        <div class="field-error" id="emailError">
+                            <span class="fe-icon">⚠️</span>
+                            <span class="fe-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group">
+                        <label class="form-label" for="adminPassword">
+                            <span class="label-icon">🔒</span>
+                            Admin Password
+                            <span class="required-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input
+                                type="password"
+                                id="adminPassword"
+                                class="form-input"
+                                placeholder="Enter admin password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <span class="input-icon-left">🔑</span>
+                            <button type="button" class="password-toggle-btn" id="togglePassword" aria-label="Toggle password visibility">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="field-error" id="passwordError">
+                            <span class="fe-icon">⚠️</span>
+                            <span class="fe-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span class="btn-icon">🔓</span>
+                        <span class="btn-text">Login</span>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </form>
+
+                <!-- Bottom Links -->
+                <div class="bottom-links">
+                    <a href="index.html" class="home-link">
+                        <span class="link-icon">←</span>
+                        Back to Home
+                    </a>
+                </div>
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <div class="security-note-inner">
+                        <span class="note-icon">🛡️</span>
+                        <span>This area is restricted to authorized administrators only.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ============================================= -->
+    <!-- SUCCESS OVERLAY                               -->
+    <!-- ============================================= -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-modal">
+            <div class="success-icon-wrap">✅</div>
+            <h2>Admin Login Successful!</h2>
+            <p>Welcome back, Administrator. You are being redirected to the admin dashboard.</p>
+            <button class="btn-go-dashboard" onclick="window.location.href='admin-dashboard.html'">
+                📊 Go to Dashboard
+            </button>
+            <div class="redirect-info">
+                Redirecting in <span class="countdown-num" id="countdown">3</span> seconds...
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- PAGE FOOTER                                   -->
+    <!-- ============================================= -->
+    <footer class="page-footer">
+        <p>© 2026 Lifeline: Smart Health Assistance Web Application</p>
+    </footer>
+
+    <!-- ============================================= -->
+    <!-- JAVASCRIPT                                    -->
+    <!-- ============================================= -->
+    <script>
+        // =============================================
+        // PREDEFINED ADMIN CREDENTIALS
+        // =============================================
+        const ADMIN_CREDENTIALS = {
+            email: 'lifeline@gmail.com',
+            password: 'LifeLine@1234'
+        };
+
+        // =============================================
+        // DOM ELEMENTS
+        // =============================================
+        const form = document.getElementById('adminLoginForm');
+        const emailInput = document.getElementById('adminEmail');
+        const passwordInput = document.getElementById('adminPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const alertBox = document.getElementById('alertBox');
+        const alertIcon = document.getElementById('alertIcon');
+        const alertText = document.getElementById('alertText');
+        const successOverlay = document.getElementById('successOverlay');
+        const countdownEl = document.getElementById('countdown');
+
+        // =============================================
+        // INITIALIZATION — CHECK IF ALREADY LOGGED IN
+        // =============================================
+        (function init() {
+            // Check if admin is already logged in
+            const adminLoggedIn = localStorage.getItem('adminLoggedIn');
+            
+            if (adminLoggedIn === 'true') {
+                // Admin already logged in, redirect to dashboard
+                showAlert('success', 'You are already logged in. Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'admin-dashboard.html';
+                }, 1500);
+            }
+
+            // Console info
+            console.log(
+                '%c🔐 Lifeline — Admin Login Page',
+                'color: #f59e0b; font-size: 14px; font-weight: bold;'
+            );
+            console.log(
+                '%cAdmin credentials: email="lifeline@gmail.com", password="LifeLine@1234"',
+                'color: #94a3b8; font-size: 11px;'
+            );
+        })();
+
+        // =============================================
+        // UTILITY: SHOW ALERT
+        // =============================================
+        function showAlert(type, message) {
+            alertBox.className = 'alert-box show alert-' + type;
+            alertIcon.textContent = type === 'error' ? '🚫' : '✅';
+            alertText.textContent = message;
+
+            // Auto-hide after 6 seconds for errors
+            if (type === 'error') {
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 6000);
+            }
+        }
+
+        function hideAlert() {
+            alertBox.classList.remove('show');
+        }
+
+        // =============================================
+        // UTILITY: FIELD ERROR MANAGEMENT
+        // =============================================
+        function showFieldError(inputEl, errorElId, message) {
+            inputEl.classList.add('input-error');
+            const errorEl = document.getElementById(errorElId);
+            errorEl.querySelector('.fe-text').textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function clearFieldError(inputEl, errorElId) {
+            inputEl.classList.remove('input-error');
+            const errorEl = document.getElementById(errorElId);
+            errorEl.classList.remove('show');
+        }
+
+        // =============================================
+        // EMAIL VALIDATION
+        // =============================================
+        function isValidEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        // =============================================
+        // REAL-TIME VALIDATION ON BLUR
+        // =============================================
+        emailInput.addEventListener('blur', function() {
+            const val = this.value.trim();
+            if (val === '') {
+                showFieldError(this, 'emailError', 'Admin email is required.');
+            } else if (!isValidEmail(val)) {
+                showFieldError(this, 'emailError', 'Please enter a valid email address.');
+            } else {
+                clearFieldError(this, 'emailError');
+            }
+        });
+
+        passwordInput.addEventListener('blur', function() {
+            const val = this.value;
+            if (val === '') {
+                showFieldError(this, 'passwordError', 'Admin password is required.');
+            } else {
+                clearFieldError(this, 'passwordError');
+            }
+        });
+
+        // Clear errors on focus
+        emailInput.addEventListener('focus', function() {
+            this.classList.remove('input-error');
+            hideAlert();
+        });
+
+        passwordInput.addEventListener('focus', function() {
+            this.classList.remove('input-error');
+            hideAlert();
+        });
+
+        // =============================================
+        // PASSWORD VISIBILITY TOGGLE
+        // =============================================
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+        // =============================================
+        // FORM SUBMISSION — LOGIN LOGIC
+        // =============================================
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Gather values
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Reset errors
+            clearFieldError(emailInput, 'emailError');
+            clearFieldError(passwordInput, 'passwordError');
+            hideAlert();
+
+            let hasErrors = false;
+
+            // ---- VALIDATE EMAIL ----
+            if (email === '') {
+                showFieldError(emailInput, 'emailError', 'Admin email is required.');
+                hasErrors = true;
+            } else if (!isValidEmail(email)) {
+                showFieldError(emailInput, 'emailError', 'Please enter a valid email address.');
+                hasErrors = true;
+            }
+
+            // ---- VALIDATE PASSWORD ----
+            if (password === '') {
+                showFieldError(passwordInput, 'passwordError', 'Admin password is required.');
+                hasErrors = true;
+            }
+
+            // If validation errors, shake form and stop
+            if (hasErrors) {
+                form.style.animation = 'shakeX 0.5s ease';
+                setTimeout(() => { form.style.animation = ''; }, 500);
+                return;
+            }
+
+            // ---- SHOW LOADING STATE ----
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            // Simulate a short delay for realism
+            setTimeout(() => {
+                // ---- CHECK CREDENTIALS ----
+                const isValidEmailMatch = email.toLowerCase() === ADMIN_CREDENTIALS.email.toLowerCase();
+                const isValidPassword = password === ADMIN_CREDENTIALS.password;
+
+                if (!isValidEmailMatch || !isValidPassword) {
+                    // Invalid credentials
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+
+                    showAlert('error', 'Invalid admin credentials. Please check your email and password.');
+
+                    // Shake the form
+                    form.style.animation = 'shakeX 0.5s ease';
+                    setTimeout(() => { form.style.animation = ''; }, 500);
+
+                    // Clear password field
+                    passwordInput.value = '';
+                    passwordInput.focus();
+
+                    console.log(
+                        '%c❌ Failed login attempt',
+                        'color: #ef4444; font-weight: bold;'
+                    );
+
+                    return;
+                }
+
+                // ---- LOGIN SUCCESSFUL ----
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+
+                // Store admin session in localStorage
+                localStorage.setItem('adminLoggedIn', 'true');
+                localStorage.setItem('adminEmail', email);
+                localStorage.setItem('adminLoginTime', new Date().toISOString());
+
+                // Show success overlay
+                successOverlay.classList.add('show');
+
+                // Start countdown
+                let count = 3;
+                countdownEl.textContent = count;
+
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    countdownEl.textContent = count;
+                    if (count <= 0) {
+                        clearInterval(countdownInterval);
+                        window.location.href = 'admin-dashboard.html';
+                    }
+                }, 1000);
+
+                console.log(
+                    '%c✅ Admin login successful!',
+                    'color: #16a34a; font-weight: bold;'
+                );
+
+            }, 1000);
+        });
+
+        // =============================================
+        // KEYBOARD: ENTER KEY SUBMITS FORM
+        // =============================================
+        passwordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        emailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                passwordInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>
