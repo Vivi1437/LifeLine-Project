@@ -699,8 +699,491 @@
         var MAX_RESULTS = 4;
 
         // =============================================
-        // GET DISEASES FROM LOCALSTORAGE ONLY
-        // This ensures admin dashboard changes are reflected
+        // DEFAULT DISEASES (77 Diseases)
+        // Used as fallback if localStorage is empty
+        // =============================================
+        var DEFAULT_DISEASES = [
+            {
+                id: 'd1',
+                name: 'Dengue Fever',
+                symptoms: ['high fever','severe headache','pain behind eyes','joint pain','muscle pain','rash','nausea','vomiting','fatigue','bleeding gums'],
+                advice: 'Dengue can become serious. Rest, drink plenty of fluids, and avoid painkillers like ibuprofen or aspirin (use paracetamol only if advised). Seek urgent medical care if you notice persistent vomiting, abdominal pain, bleeding, or extreme weakness.'
+            },
+            {
+                id: 'd2',
+                name: 'Malaria',
+                symptoms: ['fever','chills','sweating','headache','nausea','vomiting','muscle pain','fatigue'],
+                advice: 'Malaria is a serious infection. Seek medical attention as soon as possible for blood tests and antimalarial treatment. Do not delay if you have high fever with chills.'
+            },
+            {
+                id: 'd3',
+                name: 'Chikungunya',
+                symptoms: ['high fever','severe joint pain','joint swelling','muscle pain','rash'],
+                advice: 'Rest, drink plenty of fluids, and use pain relievers as prescribed. Joint pain can last for weeks or months; follow up with a doctor if pain persists or worsens.'
+            },
+            {
+                id: 'd4',
+                name: 'Typhoid Fever',
+                symptoms: ['prolonged fever','headache','abdominal pain','constipation','diarrhea','weakness'],
+                advice: 'Typhoid usually requires antibiotics. See a doctor promptly for blood tests and treatment. Drink safe, clean water and maintain good hygiene to prevent spread.'
+            },
+            {
+                id: 'd5',
+                name: 'Viral Fever',
+                symptoms: ['fever','body pain','headache','fatigue','mild cough'],
+                advice: 'Most viral fevers improve with rest, fluids, and fever-reducing medicines like paracetamol. See a doctor if fever lasts more than 3 days or is very high.'
+            },
+            {
+                id: 'd6',
+                name: 'Influenza (Flu)',
+                symptoms: ['high fever','chills','cough','sore throat','body pain','fatigue'],
+                advice: 'Rest, stay hydrated, and use fever and pain medicines as advised. Older adults, pregnant women, and people with chronic diseases should seek medical care early.'
+            },
+            {
+                id: 'd7',
+                name: 'COVID-19',
+                symptoms: ['fever','dry cough','fatigue','loss of taste','loss of smell','breathing difficulty'],
+                advice: 'Isolate yourself, wear a mask, and monitor your oxygen levels if possible. Seek urgent medical care if you have trouble breathing, persistent chest pain, or confusion.'
+            },
+            {
+                id: 'd8',
+                name: 'H1N1 (Swine Flu)',
+                symptoms: ['fever','cough','sore throat','runny nose','body pain','fatigue'],
+                advice: 'Rest and drink plenty of fluids. Antiviral medicines may be needed in some cases. Consult a doctor early if symptoms are severe.'
+            },
+            {
+                id: 'd9',
+                name: 'Common Cold',
+                symptoms: ['runny nose','sneezing','cough','sore throat','mild fever'],
+                advice: 'Usually mild and self-limiting. Rest, drink warm fluids, and use simple home remedies. See a doctor if high fever, breathing difficulty, or chest pain develops.'
+            },
+            {
+                id: 'd10',
+                name: 'Tonsillitis',
+                symptoms: ['sore throat','pain while swallowing','fever','swollen tonsils'],
+                advice: 'Drink warm fluids, gargle with salt water, and rest. A doctor may prescribe antibiotics if it is bacterial. Seek care if you have severe pain or trouble breathing.'
+            },
+            {
+                id: 'd11',
+                name: 'Pharyngitis',
+                symptoms: ['sore throat','throat irritation','pain while swallowing','mild fever'],
+                advice: 'Most cases are viral and resolve with rest, warm fluids, and throat lozenges. See a doctor if fever is high or symptoms last more than a few days.'
+            },
+            {
+                id: 'd12',
+                name: 'Bronchitis',
+                symptoms: ['cough with mucus','chest discomfort','fatigue','mild fever'],
+                advice: 'Avoid smoke and irritants, rest, and drink plenty of fluids. Seek care if you develop breathing difficulty, high fever, or chest pain.'
+            },
+            {
+                id: 'd13',
+                name: 'Pneumonia',
+                symptoms: ['high fever','cough with phlegm','chest pain','breathing difficulty'],
+                advice: 'Pneumonia can be serious. Seek medical attention immediately, especially in children, elderly, or those with chronic illnesses.'
+            },
+            {
+                id: 'd14',
+                name: 'Tuberculosis (TB)',
+                symptoms: ['long-term cough','cough with blood','weight loss','night sweats'],
+                advice: 'TB requires long-term, supervised antibiotic treatment. Visit a chest specialist or TB clinic as soon as possible. Do not stop medicines without medical advice.'
+            },
+            {
+                id: 'd15',
+                name: 'Asthma',
+                symptoms: ['wheezing','breathing difficulty','chest tightness','cough'],
+                advice: 'Use your prescribed inhalers correctly and avoid known triggers like dust, smoke, and strong smells. Seek emergency help if your inhaler is not providing relief.'
+            },
+            {
+                id: 'd16',
+                name: 'COPD',
+                symptoms: ['chronic cough','breathing difficulty','wheezing','chest tightness'],
+                advice: 'Quit smoking if you smoke. Use inhalers and medicines as prescribed. Seek urgent care if breathing suddenly worsens.'
+            },
+            {
+                id: 'd17',
+                name: 'Allergic Rhinitis',
+                symptoms: ['sneezing','runny nose','itchy eyes','watery eyes'],
+                advice: 'Avoid known allergens like dust, pollen, or pet dander. Antihistamines or nasal sprays prescribed by a doctor can provide relief.'
+            },
+            {
+                id: 'd18',
+                name: 'Gastroenteritis',
+                symptoms: ['diarrhea','vomiting','stomach pain','dehydration'],
+                advice: 'Sip oral rehydration solution frequently to prevent dehydration. Eat light, bland foods. Seek help if there is blood in stool or signs of severe dehydration.'
+            },
+            {
+                id: 'd19',
+                name: 'Food Poisoning',
+                symptoms: ['nausea','vomiting','diarrhea','stomach cramps'],
+                advice: 'Rest the gut, drink oral rehydration solution or clear fluids. Seek medical care if symptoms are severe, persistent, or if there is blood in vomit or stool.'
+            },
+            {
+                id: 'd20',
+                name: 'Cholera',
+                symptoms: ['watery diarrhea','dehydration','thirst','weakness'],
+                advice: 'Cholera can cause life-threatening dehydration. Start oral rehydration immediately and seek urgent medical care.'
+            },
+            {
+                id: 'd21',
+                name: 'Amoebiasis',
+                symptoms: ['diarrhea','stomach pain','blood in stool'],
+                advice: 'See a doctor for stool tests and appropriate anti-amoebic medicines. Drink clean water and maintain good hand hygiene.'
+            },
+            {
+                id: 'd22',
+                name: 'Giardiasis',
+                symptoms: ['diarrhea','bloating','stomach cramps','foul smelling stool'],
+                advice: 'Giardiasis needs antiparasitic treatment. Consult a doctor for proper diagnosis and medicines. Practice safe drinking water and good hygiene.'
+            },
+            {
+                id: 'd23',
+                name: 'Hepatitis A',
+                symptoms: ['fatigue','nausea','vomiting','abdominal pain','yellow skin','dark urine'],
+                advice: 'Hepatitis A usually resolves with rest and supportive care. Avoid alcohol and medicines that can harm the liver. Ensure good hygiene and safe food practices.'
+            },
+            {
+                id: 'd24',
+                name: 'Hepatitis E',
+                symptoms: ['fatigue','jaundice','abdominal pain','fever'],
+                advice: 'Rest, avoid alcohol, and drink safe, clean water. Pregnant women with hepatitis E are at higher risk and should seek urgent medical care.'
+            },
+            {
+                id: 'd25',
+                name: 'Appendicitis',
+                symptoms: ['severe abdominal pain (right side)','nausea','vomiting'],
+                advice: 'Appendicitis is a surgical emergency. Seek immediate medical attention, especially if pain starts around the belly button and moves to the lower right side.'
+            },
+            {
+                id: 'd26',
+                name: 'Irritable Bowel Syndrome',
+                symptoms: ['abdominal pain','bloating','diarrhea','constipation'],
+                advice: 'Manage with diet changes, stress reduction, and medicines as advised. Keep a food and symptom diary to identify triggers.'
+            },
+            {
+                id: 'd27',
+                name: 'Acid Reflux',
+                symptoms: ['burning chest pain','sour taste','burping'],
+                advice: 'Avoid large, spicy, or fatty meals and do not lie down immediately after eating. Antacids or acid-reducing medicines may be prescribed by a doctor.'
+            },
+            {
+                id: 'd28',
+                name: 'Peptic Ulcer',
+                symptoms: ['stomach pain','burning sensation','nausea'],
+                advice: 'Avoid painkillers like ibuprofen or aspirin unless prescribed. Limit alcohol and smoking. A doctor may prescribe acid-reducing medicines and antibiotics.'
+            },
+            {
+                id: 'd29',
+                name: 'Constipation',
+                symptoms: ['hard stool','difficulty passing stool','bloating'],
+                advice: 'Increase water intake, eat more fiber-rich foods, and stay physically active. See a doctor if constipation is severe or associated with blood in stool.'
+            },
+            {
+                id: 'd30',
+                name: 'Fungal Infection',
+                symptoms: ['itching','red rash','scaly skin'],
+                advice: 'Keep the area clean and dry. Avoid tight clothing. Use antifungal creams or medicines as prescribed and complete the full course.'
+            },
+            {
+                id: 'd31',
+                name: 'Scabies',
+                symptoms: ['severe itching','rash','itching worse at night'],
+                advice: 'Scabies requires prescription creams applied to the whole body. All close contacts should be treated. Wash clothes and bedding in hot water.'
+            },
+            {
+                id: 'd32',
+                name: 'Eczema',
+                symptoms: ['dry skin','itching','red patches'],
+                advice: 'Moisturize the skin regularly, avoid harsh soaps and known irritants, and use medicated creams as prescribed.'
+            },
+            {
+                id: 'd33',
+                name: 'Psoriasis',
+                symptoms: ['red patches','white scales','itching'],
+                advice: 'Use moisturizers and prescribed topical treatments consistently. Avoid skin injuries and manage stress. A dermatologist can advise on stronger treatments.'
+            },
+            {
+                id: 'd34',
+                name: 'Heat Rash',
+                symptoms: ['red rash','itching','small bumps'],
+                advice: 'Stay in a cool environment, wear loose cotton clothing, and keep the skin dry. See a doctor if rash is painful, spreads, or you develop fever.'
+            },
+            {
+                id: 'd35',
+                name: 'Urticaria (Hives)',
+                symptoms: ['red raised patches','itching','swelling'],
+                advice: 'Avoid suspected triggers. Antihistamines can reduce itching and swelling. Seek urgent care if you also develop breathing difficulty or facial swelling.'
+            },
+            {
+                id: 'd36',
+                name: 'Chicken Pox',
+                symptoms: ['blisters','rash','fever'],
+                advice: 'Stay at home, avoid scratching, and keep nails short. Calamine lotion and fever medicines may provide relief. Pregnant women should see a doctor promptly.'
+            },
+            {
+                id: 'd37',
+                name: 'Measles',
+                symptoms: ['fever','cough','rash','red eyes'],
+                advice: 'Measles is highly contagious. Isolate the patient, give fluids, and control fever. Ensure vaccinations (MMR) are up to date for prevention.'
+            },
+            {
+                id: 'd38',
+                name: 'Mumps',
+                symptoms: ['swollen face','fever','pain near jaw'],
+                advice: 'Rest, drink plenty of fluids, and apply warm or cold compresses to the swollen area. Avoid sour foods. Vaccination (MMR) is important for prevention.'
+            },
+            {
+                id: 'd39',
+                name: 'Osteoarthritis',
+                symptoms: ['joint pain','stiffness','swelling'],
+                advice: 'Maintain a healthy weight, stay active with low-impact exercises, and use pain relief or anti-inflammatory medicines as advised.'
+            },
+            {
+                id: 'd40',
+                name: 'Rheumatoid Arthritis',
+                symptoms: ['joint pain','swelling','morning stiffness'],
+                advice: 'Early treatment by a rheumatologist can prevent joint damage. Take prescribed disease-modifying drugs regularly and follow up regularly.'
+            },
+            {
+                id: 'd41',
+                name: 'Gout',
+                symptoms: ['severe joint pain','swelling','redness'],
+                advice: 'Rest the affected joint, apply ice packs, and avoid alcohol and high-purine foods. A doctor can prescribe medicines to control pain and uric acid levels.'
+            },
+            {
+                id: 'd42',
+                name: 'Back Pain (Muscle Strain)',
+                symptoms: ['back pain','stiffness','difficulty bending'],
+                advice: 'Rest briefly, avoid heavy lifting, and use hot or cold packs. Gentle stretching and proper posture help recovery. See a doctor if pain is severe or persistent.'
+            },
+            {
+                id: 'd43',
+                name: 'Cervical Spondylosis',
+                symptoms: ['neck pain','shoulder pain','numbness in hands'],
+                advice: 'Maintain good posture, do neck exercises as advised, and avoid long periods in one position. A doctor may recommend physiotherapy if symptoms persist.'
+            },
+            {
+                id: 'd44',
+                name: 'Vitamin D Deficiency',
+                symptoms: ['bone pain','muscle pain','weakness'],
+                advice: 'Sunlight exposure, vitamin D-rich foods, and supplements as prescribed can help. A doctor may order blood tests to confirm levels and guide proper dosing.'
+            },
+            {
+                id: 'd45',
+                name: 'Fibromyalgia',
+                symptoms: ['body pain','fatigue','sleep problems'],
+                advice: 'Regular gentle exercise, good sleep habits, and stress reduction are key. Medicines may be prescribed to help with pain and sleep.'
+            },
+            {
+                id: 'd46',
+                name: 'Diabetes Type 2',
+                symptoms: ['increased thirst','frequent urination','fatigue','blurred vision'],
+                advice: 'Consult a doctor for blood sugar testing and long-term management. Healthy diet, regular exercise, weight control, and prescribed medicines are essential.'
+            },
+            {
+                id: 'd47',
+                name: 'Hypothyroidism',
+                symptoms: ['fatigue','weight gain','dry skin','cold sensitivity'],
+                advice: 'A simple blood test can confirm thyroid hormone levels. Treatment with daily thyroid hormone tablets is usually effective. Take medicine exactly as prescribed.'
+            },
+            {
+                id: 'd48',
+                name: 'Hyperthyroidism',
+                symptoms: ['weight loss','fast heartbeat','sweating','anxiety'],
+                advice: 'Overactive thyroid needs medical evaluation. Treatment may include medicines, radioactive iodine, or surgery. Seek care if you have chest pain or very fast heartbeat.'
+            },
+            {
+                id: 'd49',
+                name: 'Dehydration',
+                symptoms: ['thirst','dry mouth','dizziness','dark urine'],
+                advice: 'Drink water or oral rehydration solution regularly in small sips. Seek urgent care if you have confusion, very little urine, or extreme weakness.'
+            },
+            {
+                id: 'd50',
+                name: 'Conjunctivitis',
+                symptoms: ['red eyes','watery eyes','itching','discharge'],
+                advice: 'Avoid rubbing your eyes, wash hands often, and do not share towels. A doctor can decide if you need antibiotic or antiviral eye drops.'
+            },
+            {
+                id: 'd51',
+                name: 'Allergic Conjunctivitis',
+                symptoms: ['red eyes','itching','watery eyes','sneezing'],
+                advice: 'Avoid allergens like dust, pollen, or pet dander if possible. Cold compresses and antihistamine drops can relieve symptoms.'
+            },
+            {
+                id: 'd52',
+                name: 'Dry Eye Syndrome',
+                symptoms: ['dry eyes','burning','redness','blurred vision'],
+                advice: 'Use artificial tears as recommended, avoid excessive screen time, and blink often. See an eye specialist if symptoms persist.'
+            },
+            {
+                id: 'd53',
+                name: 'Heart Attack',
+                symptoms: ['chest pain','arm pain','shortness of breath','sweating'],
+                advice: 'This is a medical emergency. Call emergency services immediately. Do not drive yourself to the hospital. Chew an aspirin if not allergic and if advised.'
+            },
+            {
+                id: 'd54',
+                name: 'Stroke',
+                symptoms: ['weakness','confusion','difficulty speaking','facial droop'],
+                advice: 'Stroke is an emergency. Seek immediate medical care. Remember FAST: Face drooping, Arm weakness, Speech difficulty, Time to act fast.'
+            },
+            {
+                id: 'd55',
+                name: 'Sepsis',
+                symptoms: ['high fever','confusion','fast heart rate','breathing difficulty'],
+                advice: 'Sepsis is life-threatening. Go to the emergency department immediately. Early antibiotics and intensive monitoring are often required.'
+            },
+            {
+                id: 'd56',
+                name: 'Anaphylaxis',
+                symptoms: ['breathing difficulty','swelling','rash','low blood pressure'],
+                advice: 'Anaphylaxis is a severe allergic reaction and a medical emergency. Use an epinephrine auto-injector if available and call emergency services immediately.'
+            },
+            {
+                id: 'd57',
+                name: 'Meningitis',
+                symptoms: ['severe headache','neck stiffness','fever','vomiting'],
+                advice: 'Meningitis can be fatal. Seek emergency care immediately, especially if there is rash, confusion, or seizures.'
+            },
+            {
+                id: 'd58',
+                name: 'Migraine',
+                symptoms: ['severe headache','one side pain','light sensitivity','nausea'],
+                advice: 'Rest in a dark, quiet room, and avoid triggers like certain foods, stress, or lack of sleep. Frequent or severe attacks should be evaluated by a doctor.'
+            },
+            {
+                id: 'd59',
+                name: 'Sinusitis',
+                symptoms: ['face pain','blocked nose','headache','pressure around eyes'],
+                advice: 'Steam inhalation, saline nasal sprays, and adequate hydration can help. A doctor may prescribe decongestants or antibiotics if symptoms last more than 10 days.'
+            },
+            {
+                id: 'd60',
+                name: 'Epilepsy',
+                symptoms: ['seizures','shaking','loss of consciousness'],
+                advice: 'If someone is having a seizure, place them on their side, protect their head, and do not put anything in their mouth. Call emergency services if it lasts more than 5 minutes.'
+            },
+            {
+                id: 'd61',
+                name: 'Dental Caries',
+                symptoms: ['tooth pain','sensitivity','pain while eating'],
+                advice: 'Maintain good oral hygiene, avoid excessive sweets, and visit a dentist for proper treatment. Do not ignore persistent tooth pain.'
+            },
+            {
+                id: 'd62',
+                name: 'Gingivitis',
+                symptoms: ['swollen gums','bleeding gums','bad breath'],
+                advice: 'Brush gently twice a day, floss regularly, and use an antiseptic mouthwash if advised. Visit a dentist for professional cleaning and evaluation.'
+            },
+            {
+                id: 'd63',
+                name: 'Iron Deficiency Anemia',
+                symptoms: ['weakness','dizziness','pale skin'],
+                advice: 'Consult a doctor for blood tests. Eat iron-rich foods and take iron supplements if prescribed. The cause of anemia should also be investigated.'
+            },
+            {
+                id: 'd64',
+                name: 'Urinary Tract Infection (UTI)',
+                symptoms: ['burning urination','frequent urination','lower abdominal pain'],
+                advice: 'Drink more water and see a doctor for urine tests and antibiotics. Do not ignore UTIs, as infection can spread to the kidneys.'
+            },
+            {
+                id: 'd65',
+                name: 'Ringworm Infection',
+                symptoms: ['round rash','itching','red skin'],
+                advice: 'Keep the area clean and dry and use antifungal creams as prescribed. Avoid sharing towels or clothing to prevent spread.'
+            },
+            {
+                id: 'd66',
+                name: 'Boils',
+                symptoms: ['painful lumps','swelling','pus'],
+                advice: 'Apply warm compresses to help the boil drain. Do not squeeze it yourself. A doctor may need to drain it safely and prescribe antibiotics.'
+            },
+            {
+                id: 'd67',
+                name: 'Otitis Media',
+                symptoms: ['ear pain','hearing problem','fever'],
+                advice: 'A doctor can confirm the diagnosis and may prescribe pain relievers and sometimes antibiotics. Seek care if there is ear discharge or severe pain.'
+            },
+            {
+                id: 'd68',
+                name: 'Rhinosinusitis',
+                symptoms: ['blocked nose','headache','thick mucus'],
+                advice: 'Steam inhalation, saline nasal rinses, and adequate fluids are helpful. See a doctor if symptoms persist beyond 10-14 days.'
+            },
+            {
+                id: 'd69',
+                name: 'Hypertension',
+                symptoms: ['headache','dizziness','blurred vision'],
+                advice: 'Regular BP checks are important. Follow a low-salt diet, exercise regularly, avoid smoking and excess alcohol, and take prescribed medicines consistently.'
+            },
+            {
+                id: 'd70',
+                name: 'Hypotension',
+                symptoms: ['dizziness','fainting','weakness'],
+                advice: 'Drink enough fluids, avoid sudden standing, and talk to a doctor, especially if you faint or feel very weak.'
+            },
+            {
+                id: 'd71',
+                name: 'Cellulitis',
+                symptoms: ['skin redness','swelling','pain','warmth'],
+                advice: 'See a doctor promptly for antibiotics. Mark the affected area to monitor spread and seek urgent care if redness rapidly expands or you develop fever.'
+            },
+            {
+                id: 'd72',
+                name: 'Impetigo',
+                symptoms: ['red sores','blisters','crust formation'],
+                advice: 'Keep the area clean, avoid scratching, and cover sores if possible. A doctor may prescribe topical or oral antibiotics.'
+            },
+            {
+                id: 'd73',
+                name: 'Brain Tumor',
+                symptoms: ['severe headache','vomiting','vision problems'],
+                advice: 'Persistent or worsening headaches with vomiting or vision changes need urgent medical evaluation and brain imaging.'
+            },
+            {
+                id: 'd74',
+                name: 'Kidney Stones',
+                symptoms: ['severe back pain','pain during urination','blood in urine'],
+                advice: 'Drink plenty of water and seek medical attention. Pain control and imaging may be needed, and larger stones sometimes require procedures to remove.'
+            },
+            {
+                id: 'd75',
+                name: 'Bladder Stones',
+                symptoms: ['lower abdominal pain','painful urination'],
+                advice: 'Bladder stones often require medical or surgical treatment. Consult a urologist for evaluation and management.'
+            },
+            {
+                id: 'd76',
+                name: 'Rabies',
+                symptoms: ['fever','hydrophobia (fear of water)','confusion'],
+                advice: 'Rabies is almost always fatal once symptoms appear. After any animal bite or scratch, seek medical care immediately for wound cleaning and rabies vaccination.'
+            },
+            {
+                id: 'd77',
+                name: 'Tetanus',
+                symptoms: ['muscle stiffness','jaw locking','spasms'],
+                advice: 'After any deep or dirty wound, seek medical care immediately. Vaccination and sometimes tetanus immunoglobulin are needed.'
+            }
+        ];
+
+        // =============================================
+        // INITIALIZE DATABASE IF EMPTY
+        // =============================================
+        function initializeDatabase() {
+            try {
+                var existing = localStorage.getItem('diseases');
+                if (!existing || JSON.parse(existing).length === 0) {
+                    localStorage.setItem('diseases', JSON.stringify(DEFAULT_DISEASES));
+                    console.log('%c Initialized disease database with ' + DEFAULT_DISEASES.length + ' diseases', 'color: #16a34a;');
+                }
+            } catch (e) {
+                localStorage.setItem('diseases', JSON.stringify(DEFAULT_DISEASES));
+            }
+        }
+
+        // =============================================
+        // GET DISEASES FROM LOCALSTORAGE
         // =============================================
         function getDiseases() {
             try {
@@ -754,6 +1237,9 @@
                     document.getElementById('userName').textContent = 'User';
                 }
 
+                // Initialize database if localStorage is empty
+                initializeDatabase();
+
                 updateStats();
                 renderTags();
                 document.getElementById('loadingScreen').classList.add('hide');
@@ -803,7 +1289,7 @@
         // SYMPTOM MANAGEMENT
         // =============================================
         function normalize(s) {
-            return s.toLowerCase().trim().replace(/[^a-z0-9\s\/\-]/g, '');
+            return s.toLowerCase().trim().replace(/[^a-z0-9\s\/\-\(\)]/g, '');
         }
 
         function addSymptom(raw) {
@@ -1005,7 +1491,6 @@
                 var results = [];
 
                 diseases.forEach(function(disease) {
-                    // Support both 'name' and 'disease' field names
                     var diseaseName = disease.name || disease.disease || 'Unknown';
                     var diseaseSymptoms = (disease.symptoms || []).map(function(s) { 
                         return s.toLowerCase().trim(); 
